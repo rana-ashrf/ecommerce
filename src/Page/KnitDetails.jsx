@@ -2,11 +2,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import "../styles/DressDetails.css"; 
+import "../styles/DressDetails.css";
+import "../styles/Dresses.css";
 import { useWishlist } from "../Context/WishlistContext";
 import Navbar from "./Navbar";
 import { useCart } from "../Context/CartContext";
 import { toast } from "react-toastify";
+import { getFinalPrice } from "../utils/price";
 
 function KnitDetails() {
   const { id } = useParams();
@@ -38,8 +40,11 @@ function KnitDetails() {
     .slice(0, 6);
 
   const isWishlisted = wishlist.some(
-  (item) => item.productId === top.id
-);
+    (item) => item.productId === top.id
+  );
+
+  const hasDiscount = top.discount && top.discount > 0;
+  const finalPrice = getFinalPrice(top.price, top.discount);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -57,7 +62,19 @@ function KnitDetails() {
       <img src={top.image} alt={top.name} />
 
       <h2>{top.name}</h2>
-      <h3>₹{top.price}</h3>
+
+      <p className="price-row">
+        {hasDiscount && (
+          <span className="original-price">₹{top.price}</span>
+        )}
+
+        <span className={hasDiscount ? "current-price" : "normal-price"}>
+          ₹{finalPrice}
+        </span>
+
+        
+      </p>
+
       <p><b>COLOR:</b> {top.color}</p>
 
       {/* SIZE */}
@@ -73,7 +90,6 @@ function KnitDetails() {
           </button>
         ))}
       </div>
-
 
       <div className="action-bar">
         <button
@@ -110,20 +126,34 @@ function KnitDetails() {
       <h3 className="related-title">Products that you might like</h3>
 
       <div className="related-products">
-        {related.map(item => (
-          <div
-            key={item.id}
-            className="related-card"
-            onClick={() => navigate(`/knitwear/${item.id}`)}
-          >
-            <img src={item.image} alt={item.name} />
-            <p className="name">{item.name}</p>
-            <p className="price">₹{item.price}</p>
-          </div>
-        ))}
+        {related.map(item => {
+          const hasDiscount = item.discount && item.discount > 0;
+          const finalPrice = getFinalPrice(item.price, item.discount);
+
+          return (
+            <div
+              key={item.id}
+              className="related-card"
+              onClick={() => navigate(`/knitwear/${item.id}`)}
+            >
+              <img src={item.image} alt={item.name} />
+              <p className="name">{item.name}</p>
+
+              <p className="price-row">
+                {hasDiscount && (
+                  <span className="original-price">₹{item.price}</span>
+                )}
+
+                <span className={hasDiscount ? "current-price" : "normal-price"}>
+                  ₹{finalPrice}
+                </span>
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-export default KnitDetails
+export default KnitDetails;

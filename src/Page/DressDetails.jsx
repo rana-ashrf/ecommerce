@@ -73,21 +73,19 @@ function DressDetails() {
       <h2>{dress.name}</h2>
 
       {/* PRICE */}
-      <p className="price">
+      <p className="price-row">
         {hasDiscount && (
-          <span className="old-price">
+          <span className="original-price">
             ₹{dress.price}
           </span>
         )}
-        <span
-          className={
-            hasDiscount ? "new-price" : "normal-price"
-          }
-        >
+
+        <span className={hasDiscount ? "current-price" : "normal-price"}>
           ₹{finalPrice}
         </span>
-      </p>
 
+
+      </p>
       <p>
         <b>COLOR:</b> {dress.color}
       </p>
@@ -167,19 +165,14 @@ function DressDetails() {
                 alt={item.name}
               />
               <p className="name">{item.name}</p>
-              <p className="price">
+              <p className="price-row">
                 {hasDiscount && (
-                  <span className="old-price">
+                  <span className="original-price">
                     ₹{item.price}
                   </span>
                 )}
-                <span
-                  className={
-                    hasDiscount
-                      ? "new-price"
-                      : "normal-price"
-                  }
-                >
+
+                <span className={hasDiscount ? "current-price" : "normal-price"}>
                   ₹{finalPrice}
                 </span>
               </p>

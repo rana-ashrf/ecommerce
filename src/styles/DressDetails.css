@@ -41,14 +41,15 @@
 
 .action-bar {
   display: flex;
+  align-items: center;
   gap: 12px;
   margin-top: 24px;
   width: 100%;
   max-width: 360px;
 }
 
-
 .wishlist-btn {
+  min-width: 44px;
   width: 44px;
   height: 44px;
   border: 1.5px solid black;
@@ -58,6 +59,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: 0;
+  z-index: 2;
 }
 
 .wishlist-btn svg {

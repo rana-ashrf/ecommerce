@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { getFinalPrice } from "../utils/price";
-import "../styles/Dresses.css"; 
+import "../styles/Dresses.css";
 
 function SalePage() {
   const [saleProducts, setSaleProducts] = useState([]);
@@ -22,7 +22,7 @@ function SalePage() {
         axios.get(url).then((res) =>
           res.data.map((item) => ({
             ...item,
-            collection: url.split("/").pop(), 
+            collection: url.split("/").pop(),
           }))
         )
       )
@@ -79,9 +79,16 @@ function SalePage() {
 
               <p className="name">{item.name}</p>
 
-              <p className="price">
-                <span className="old-price">₹{item.price}</span>
-                <span className="new-price">₹{finalPrice}</span>
+              <p className="price-row">
+                <span className="original-price">₹{item.price}</span>
+
+                <span className="current-price">
+                  ₹{finalPrice}
+                </span>
+
+                <span className="discount-text">
+                  {item.discount}% OFF
+                </span>
               </p>
             </div>
           );

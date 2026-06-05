@@ -71,9 +71,19 @@
       "id": "6ea4",
       "username": "fathima",
       "email": "fathi1@gmail.com",
-      "phone": "3333333333",
+      "phone": "8606889332",
       "password": "Fathi@1",
-      "blocked": false
+      "blocked": false,
+      "fullName": "fathima",
+      "gender": "Female",
+      "dob": "2004-10-18"
+    },
+    {
+      "username": "mazi",
+      "email": "mazi12@gmail.com",
+      "phone": "9748362849",
+      "password": "Mazin@1",
+      "id": "pCZAVH5"
     }
   ],
   "dresses": [
@@ -2595,18 +2605,33 @@
       "discount": 20
     }
   ],
-  "cart": [],
-  "wishlist": [
+  "cart": [
     {
-      "id": "0a8b",
       "userId": "6ea4",
-      "productId": "35",
-      "name": "Ladies Elegant Solid Color flare Sleeve dress",
-      "image": "/images/Aline11.jpg",
+      "productId": "2",
+      "title": "Ines tweed Mini Dress",
+      "image": "/images/mini2.jpg",
       "url": "/dresses",
-      "price": 1899,
-      "discount": 0
+      "size": "S",
+      "qty": 1,
+      "price": 1619,
+      "originalPrice": 1799,
+      "id": "1"
     },
+    {
+      "id": "4c4d",
+      "userId": "6ea4",
+      "productId": "138",
+      "title": "Puffer Coat",
+      "image": "/images/coat2.jpeg",
+      "url": "/outerwear",
+      "size": "S",
+      "qty": 1,
+      "price": 1113,
+      "originalPrice": 1590
+    }
+  ],
+  "wishlist": [
     {
       "id": "97a2",
       "userId": "6ea4",
@@ -2628,38 +2653,109 @@
       "discount": 50
     },
     {
-      "id": "20cf",
-      "userId": "6ea4",
-      "productId": "50",
+      "userId": "pCZAVH5",
+      "productId": "40",
       "name": "Ladies Elegant Solid Color flare Sleeve dress",
-      "image": "/images/Tops15.jpg",
+      "image": "/images/Tops5.jpg",
       "url": "/Tops",
-      "price": 1239,
-      "discount": 0
+      "price": 849,
+      "discount": 0,
+      "id": "eAUAkn8"
     },
     {
-      "id": "b4a4",
       "userId": "6ea4",
-      "productId": "52",
+      "productId": "36",
       "name": "Ladies Elegant Solid Color flare Sleeve dress",
-      "image": "/images/blouse3.jpg",
+      "image": "/images/Tops1.jpg",
       "url": "/Tops",
-      "price": 945,
-      "discount": 0
+      "price": 1899,
+      "discount": 0,
+      "id": "_sfui9U"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "138",
+      "name": "Puffer Coat",
+      "image": "/images/coat2.jpeg",
+      "url": "/outerwear",
+      "price": 1590,
+      "discount": 30,
+      "id": "oEttkGJ"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "5",
+      "name": "Denim Solid Zipper Knotted Mini Dress",
+      "image": "/images/mini5.jpg",
+      "url": "/dresses",
+      "price": 1999,
+      "discount": 0,
+      "id": "zzgpl3b"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "17",
+      "name": "Puff Sleeve Princess style Midi Dress",
+      "image": "/images/midi2.jpg",
+      "url": "/dresses",
+      "price": 2299,
+      "discount": 50,
+      "id": "MFlJ21i"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "12",
+      "name": "Off-Soulder fit & flare Mini Dress",
+      "image": "/images/mini12.jpg",
+      "url": "/dresses",
+      "price": 2199,
+      "discount": 0,
+      "id": "OHE41UA"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "3",
+      "name": "White ruffled Mini Dress",
+      "image": "/images/mini3.jpg",
+      "url": "/dresses",
+      "price": 1999,
+      "discount": 20,
+      "id": "zZUp422"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "143",
+      "name": "Wool Blend Coat",
+      "image": "/images/coat7.jpeg",
+      "url": "/outerwear",
+      "price": 1512,
+      "discount": 0,
+      "id": "olh9p_7"
+    },
+    {
+      "userId": "6ea4",
+      "productId": "2",
+      "name": "Ines tweed Mini Dress",
+      "image": "/images/mini2.jpg",
+      "url": "/dresses",
+      "price": 1799,
+      "discount": 10,
+      "id": "UsHRcZT"
     }
   ],
   "addresses": [
     {
       "id": "c821",
-      "name": "RANA FATHIMA K P",
-      "phone": "97483628493",
-      "house": "800",
-      "area": "nnnn",
-      "city": "kannur",
-      "state": "kerala",
+      "name": "najma",
+      "phone": "9748362842",
+      "house": "120",
+      "area": "Valapattanam",
+      "city": "Kannur",
+      "state": "Kerala",
       "pincode": "670602",
       "userId": "6ea4",
-      "isDefault": true
+      "isDefault": true,
+      "type": "work"
     },
     {
       "id": "ce72",
@@ -2696,6 +2792,18 @@
       "pincode": "670602",
       "userId": "6ea4",
       "isDefault": true
+    },
+    {
+      "name": "RANA FATHIMA K P",
+      "phone": "97483628493",
+      "house": "800",
+      "area": "nnnn",
+      "city": "kannur",
+      "state": "kerala",
+      "pincode": "670602",
+      "userId": "pCZAVH5",
+      "isDefault": true,
+      "id": "OkBG-Bp"
     }
   ],
   "orders": [
@@ -2802,7 +2910,7 @@
           "originalPrice": 1239
         }
       ],
-      "status": "Placed",
+      "status": "Cancelled",
       "orderDate": "2026-02-24T09:19:59.852Z",
       "deliveryDate": "2026-03-03T09:19:59.852Z",
       "totalAmount": 1239,
@@ -2838,7 +2946,7 @@
           "originalPrice": 1899
         }
       ],
-      "status": "Placed",
+      "status": "Cancelled",
       "orderDate": "2026-02-24T09:20:48.016Z",
       "deliveryDate": "2026-03-03T09:20:48.016Z",
       "totalAmount": 1709.1,
@@ -2856,6 +2964,384 @@
         "userId": "6ea4",
         "isDefault": true
       }
+    },
+    {
+      "userId": "pCZAVH5",
+      "items": [
+        {
+          "userId": "pCZAVH5",
+          "productId": "35",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/Aline11.jpg",
+          "url": "/dresses",
+          "size": "S",
+          "qty": 1,
+          "price": 1899,
+          "originalPrice": 1899,
+          "id": 1
+        }
+      ],
+      "status": "Placed",
+      "orderDate": "2026-03-29T15:00:03.216Z",
+      "deliveryDate": "2026-04-05T15:00:03.216Z",
+      "totalAmount": 1899,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "name": "RANA FATHIMA K P",
+        "phone": "97483628493",
+        "house": "800",
+        "area": "nnnn",
+        "city": "kannur",
+        "state": "kerala",
+        "pincode": "670602",
+        "userId": "pCZAVH5",
+        "isDefault": true,
+        "id": "OkBG-Bp"
+      },
+      "id": "vrdQJdQ"
+    },
+    {
+      "userId": "pCZAVH5",
+      "items": [
+        {
+          "userId": "pCZAVH5",
+          "productId": "40",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/Tops5.jpg",
+          "url": "/Tops",
+          "size": "M",
+          "qty": 1,
+          "price": 849,
+          "originalPrice": 849,
+          "id": 1
+        }
+      ],
+      "status": "Placed",
+      "orderDate": "2026-03-29T15:08:39.764Z",
+      "deliveryDate": "2026-04-05T15:08:39.764Z",
+      "totalAmount": 849,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "name": "RANA FATHIMA K P",
+        "phone": "97483628493",
+        "house": "800",
+        "area": "nnnn",
+        "city": "kannur",
+        "state": "kerala",
+        "pincode": "670602",
+        "userId": "pCZAVH5",
+        "isDefault": true,
+        "id": "OkBG-Bp"
+      },
+      "id": "_0BDnE1"
+    },
+    {
+      "userId": "6ea4",
+      "items": [
+        {
+          "userId": "6ea4",
+          "productId": "39",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/Tops4.jpg",
+          "url": "/Tops",
+          "size": "S",
+          "qty": 2,
+          "price": 1202,
+          "originalPrice": 1202,
+          "id": 1
+        },
+        {
+          "userId": "6ea4",
+          "productId": "35",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/Aline11.jpg",
+          "url": "/dresses",
+          "size": "M",
+          "qty": 1,
+          "price": 1899,
+          "originalPrice": 1899,
+          "id": 2
+        }
+      ],
+      "status": "Cancelled",
+      "orderDate": "2026-05-12T13:36:36.585Z",
+      "deliveryDate": "2026-05-19T13:36:36.585Z",
+      "totalAmount": 4303,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "id": "ZbUX4Nw"
+    },
+    {
+      "userId": "6ea4",
+      "items": [
+        {
+          "userId": "6ea4",
+          "productId": "52",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/blouse3.jpg",
+          "url": "/Tops",
+          "size": "M",
+          "qty": 2,
+          "price": 945,
+          "originalPrice": 945,
+          "id": 2
+        },
+        {
+          "userId": "6ea4",
+          "productId": "94",
+          "title": " Biege High Rise Tailored Pant",
+          "image": "/images/pant3.jpg",
+          "url": "/bottoms",
+          "size": "L",
+          "qty": 1,
+          "price": 1070,
+          "originalPrice": 1070,
+          "id": 4
+        },
+        {
+          "userId": "6ea4",
+          "productId": "5",
+          "title": "Denim Solid Zipper Knotted Mini Dress",
+          "image": "/images/mini5.jpg",
+          "url": "/dresses",
+          "size": "M",
+          "qty": 1,
+          "price": 1999,
+          "originalPrice": 1999,
+          "id": 5
+        },
+        {
+          "userId": "6ea4",
+          "productId": "17",
+          "title": "Puff Sleeve Princess style Midi Dress",
+          "image": "/images/midi2.jpg",
+          "url": "/dresses",
+          "size": "XL",
+          "qty": 1,
+          "price": 1150,
+          "originalPrice": 2299,
+          "id": 6
+        }
+      ],
+      "status": "Cancelled",
+      "orderDate": "2026-05-12T17:46:08.577Z",
+      "deliveryDate": "2026-05-19T17:46:08.577Z",
+      "totalAmount": 6109,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "id": "fn4q9bh"
+    },
+    {
+      "userId": "6ea4",
+      "items": [
+        {
+          "userId": "6ea4",
+          "productId": "5",
+          "title": "Denim Solid Zipper Knotted Mini Dress",
+          "image": "/images/mini5.jpg",
+          "url": "/dresses",
+          "size": "M",
+          "qty": 2,
+          "price": 1999,
+          "originalPrice": 1999,
+          "id": 1
+        }
+      ],
+      "status": "Cancelled",
+      "orderDate": "2026-05-12T17:51:37.034Z",
+      "deliveryDate": "2026-05-19T17:51:37.034Z",
+      "totalAmount": 3998,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "id": "bkbiR1t"
+    },
+    {
+      "userId": "6ea4",
+      "items": [
+        {
+          "userId": "6ea4",
+          "productId": "137",
+          "title": "Faux Fur Coat",
+          "image": "/images/coat1.jpeg",
+          "url": "/outerwear",
+          "size": "M",
+          "qty": 1,
+          "price": 3690,
+          "originalPrice": 3690,
+          "id": 1
+        },
+        {
+          "userId": "6ea4",
+          "productId": "52",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/blouse3.jpg",
+          "url": "/Tops",
+          "size": "M",
+          "qty": 1,
+          "price": 945,
+          "originalPrice": 945,
+          "id": 2
+        }
+      ],
+      "status": "Cancelled",
+      "orderDate": "2026-05-12T17:53:19.486Z",
+      "deliveryDate": "2026-05-19T17:53:19.486Z",
+      "totalAmount": 4635,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "id": "hKsd5Yo"
+    },
+    {
+      "userId": "6ea4",
+      "items": [
+        {
+          "userId": "6ea4",
+          "productId": "145",
+          "title": "Pocket Faux Fur Coat",
+          "image": "/images/coat9.jpeg",
+          "url": "/outerwear",
+          "size": "S",
+          "qty": 2,
+          "price": 1096,
+          "originalPrice": 1096,
+          "id": 1
+        },
+        {
+          "userId": "6ea4",
+          "productId": "52",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/blouse3.jpg",
+          "url": "/Tops",
+          "size": "M",
+          "qty": 1,
+          "price": 945,
+          "originalPrice": 945,
+          "id": 2
+        }
+      ],
+      "status": "Placed",
+      "orderDate": "2026-05-12T17:57:23.451Z",
+      "deliveryDate": "2026-05-19T17:57:23.451Z",
+      "totalAmount": 3137,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "id": "KPahwq6"
+    },
+    {
+      "userId": "6ea4",
+      "items": [
+        {
+          "userId": "6ea4",
+          "productId": "143",
+          "title": "Wool Blend Coat",
+          "image": "/images/coat7.jpeg",
+          "url": "/outerwear",
+          "size": "M",
+          "qty": 1,
+          "price": 1512,
+          "originalPrice": 1512,
+          "id": 1
+        },
+        {
+          "userId": "6ea4",
+          "productId": "39",
+          "title": "Ladies Elegant Solid Color flare Sleeve dress",
+          "image": "/images/Tops4.jpg",
+          "url": "/Tops",
+          "size": "L",
+          "qty": 1,
+          "price": 1202,
+          "originalPrice": 1202,
+          "id": 2
+        }
+      ],
+      "status": "Placed",
+      "orderDate": "2026-05-12T18:06:30.159Z",
+      "deliveryDate": "2026-05-19T18:06:30.159Z",
+      "totalAmount": 2714,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "id": "YWxEuLn"
     }
   ],
   "returns": [

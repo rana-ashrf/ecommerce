@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import "../styles/DressDetails.css"; 
+import "../styles/DressDetails.css";
 import { useWishlist } from "../Context/WishlistContext";
 import Navbar from "./Navbar";
 import { useCart } from "../Context/CartContext";
@@ -29,7 +29,7 @@ function OuterDetails() {
       .then(res => setAllTops(res.data))
       .catch(err => console.error(err));
 
-    setSelectedSize(""); 
+    setSelectedSize("");
   }, [id]);
 
   if (!top) return <p>Loading...</p>;
@@ -39,11 +39,11 @@ function OuterDetails() {
     .slice(0, 6);
 
   const isWishlisted = wishlist.some(
-  (item) => item.productId === top.id
-);
-  
-   const hasDiscount = top.discount && top.discount > 0;
-    const finalPrice = getFinalPrice(top.price, top.discount);
+    (item) => item.productId === top.id
+  );
+
+  const hasDiscount = top.discount && top.discount > 0;
+  const finalPrice = getFinalPrice(top.price, top.discount);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -58,16 +58,19 @@ function OuterDetails() {
       <Navbar textColor="black" />
 
       {/* PRODUCT IMAGE */}
-      <img src={top.image} alt={top.name} className="mt-19"/>
+      <img src={top.image} alt={top.name} className="mt-19" />
 
       <h2>{top.name}</h2>
-<p className="price">
+      <p className="price-row">
         {hasDiscount && (
-          <span className="old-price">₹{top.price}</span>
+          <span className="original-price">₹{top.price}</span>
         )}
-        <span className={hasDiscount ? "new-price" : "normal-price"}>
+
+        <span className={hasDiscount ? "current-price" : "normal-price"}>
           ₹{finalPrice}
         </span>
+
+        
       </p>
 
       <p><b>COLOR:</b> {top.color}</p>
@@ -119,33 +122,34 @@ function OuterDetails() {
       </div>
 
       {/* YOU MAY ALSO LIKE */}
-            <h3 className="related-title">Products that you might like</h3>
-      
-            <div className="related-products">
-              {related.map(item => {
-                const hasDiscount = item.discount && item.discount > 0;
-                const finalPrice = getFinalPrice(item.price, item.discount);
-      
-                return (
-                  <div
-                    key={item.id}
-                    className="related-card"
-                    onClick={() => navigate(`/outerwear/${item.id}`)}
-                  >
-                    <img src={item.image} alt={item.name} />
-                    <p className="name">{item.name}</p>
-                    <p className="price">
-                      {hasDiscount && (
-                        <span className="old-price">₹{item.price}</span>
-                      )}
-                      <span className={hasDiscount ? "new-price" : "normal-price"}>
-                        ₹{finalPrice}
-                      </span>
-                    </p>
-                  </div>
-                );
-              })}
-              
+      <h3 className="related-title">Products that you might like</h3>
+
+      <div className="related-products">
+        {related.map(item => {
+          const hasDiscount = item.discount && item.discount > 0;
+          const finalPrice = getFinalPrice(item.price, item.discount);
+
+          return (
+            <div
+              key={item.id}
+              className="related-card"
+              onClick={() => navigate(`/outerwear/${item.id}`)}
+            >
+              <img src={item.image} alt={item.name} />
+              <p className="name">{item.name}</p>
+              <p className="price-row">
+                {hasDiscount && (
+                  <span className="original-price">₹{item.price}</span>
+                )}
+
+                <span className={hasDiscount ? "current-price" : "normal-price"}>
+                  ₹{finalPrice}
+                </span>
+              </p>
+            </div>
+          );
+        })}
+
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "../styles/DressDetails.css";
-import "../styles/Dresses.css"; 
+import "../styles/Dresses.css";
 import { useWishlist } from "../Context/WishlistContext";
 import Navbar from "./Navbar";
 import { useCart } from "../Context/CartContext";
@@ -44,8 +44,8 @@ function SaleProductDetails() {
   if (!product) return <p>Loading...</p>;
 
   const isWishlisted = wishlist.some(
-  (item) => item.productId === product.id
-);
+    (item) => item.productId === product.id
+  );
 
   const finalPrice = getFinalPrice(
     product.price,
@@ -89,9 +89,16 @@ function SaleProductDetails() {
         </h2>
 
         {/* PRICE */}
-        <p className="price" style={{ justifyContent: "center" }}>
-          <span className="old-price">₹{product.price}</span>
-          <span className="new-price">₹{finalPrice}</span>
+        <p className="price-row" style={{ justifyContent: "center" }}>
+          <span className="original-price">
+            ₹{product.price}
+          </span>
+
+          <span className="current-price">
+            ₹{finalPrice}
+          </span>
+
+          
         </p>
 
         {/* COLOR */}

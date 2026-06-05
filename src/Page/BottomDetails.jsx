@@ -16,25 +16,25 @@ function BottomDetails() {
   const { addToCart, isInCart } = useCart();
   const { wishlist, toggleWishlist } = useWishlist();
 
-  
+
   const [bottom, setBottom] = useState(null);
   const [allBottoms, setAllBottoms] = useState([]);
   const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
-    
+
     axios
-  .get(`http://localhost:5000/bottoms/${id}`)
-  .then((res) => {
-    if (res.data.active === false) {
-      navigate("/bottoms"); // redirect if product disabled
-      return;
-    }
-    setBottom(res.data);
-  })
+      .get(`http://localhost:5000/bottoms/${id}`)
+      .then((res) => {
+        if (res.data.active === false) {
+          navigate("/bottoms"); // redirect if product disabled
+          return;
+        }
+        setBottom(res.data);
+      })
 
 
-   
+
     axios
       .get("http://localhost:5000/bottoms")
       .then((res) => setAllBottoms(res.data))
@@ -47,20 +47,20 @@ function BottomDetails() {
 
 
   const related = allBottoms
-  .filter((item) =>
-    item.active !== false &&
-    item.category === bottom.category &&
-    item.id !== bottom.id
-  )
-  .slice(0, 6);
+    .filter((item) =>
+      item.active !== false &&
+      item.category === bottom.category &&
+      item.id !== bottom.id
+    )
+    .slice(0, 6);
 
 
   const isWishlisted = wishlist.some(
-  (item) => item.productId === bottom.id
-);
+    (item) => item.productId === bottom.id
+  );
 
   const hasDiscount = bottom.discount && bottom.discount > 0;
-    const finalPrice = getFinalPrice(bottom.price, bottom.discount);
+  const finalPrice = getFinalPrice(bottom.price, bottom.discount);
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -74,17 +74,22 @@ function BottomDetails() {
     <div className="dress-details pt-24">
       <Navbar textColor="black" />
 
-      
-      <img src={bottom.image} alt={bottom.name} className="mt-19"/>
+
+      <img src={bottom.image} alt={bottom.name} className="mt-19" />
 
       <h2>{bottom.name}</h2>
-       <p className="price">
+      <p className="price-row">
         {hasDiscount && (
-          <span className="old-price">₹{bottom.price}</span>
+          <span className="original-price">
+            ₹{bottom.price}
+          </span>
         )}
-        <span className={hasDiscount ? "new-price" : "normal-price"}>
+
+        <span className={hasDiscount ? "current-price" : "normal-price"}>
           ₹{finalPrice}
         </span>
+
+        
       </p>
 
 
@@ -109,7 +114,7 @@ function BottomDetails() {
         ))}
       </div>
 
-      
+
       <div className="action-bar">
         <button
           onClick={() => toggleWishlist(bottom)}
@@ -146,22 +151,25 @@ function BottomDetails() {
       </h3>
 
       <div className="related-products">
-        {related.map(item =>{
-                  const hasDiscount = item.discount && item.discount > 0;
-                  const finalPrice = getFinalPrice(item.price, item.discount);
-                  return (
-          <div
-            key={item.id}
-            className="related-card"
-            onClick={() => navigate(`/bottoms/${item.id}`)} // 🔥 FIXED
-          >
-            <img src={item.image} alt={item.name} />
+        {related.map(item => {
+          const hasDiscount = item.discount && item.discount > 0;
+          const finalPrice = getFinalPrice(item.price, item.discount);
+          return (
+            <div
+              key={item.id}
+              className="related-card"
+              onClick={() => navigate(`/bottoms/${item.id}`)} // 🔥 FIXED
+            >
+              <img src={item.image} alt={item.name} />
               <p className="name">{item.name}</p>
-              <p className="price">
+              <p className="price-row">
                 {hasDiscount && (
-                  <span className="old-price">₹{item.price}</span>
+                  <span className="original-price">
+                    ₹{item.price}
+                  </span>
                 )}
-                <span className={hasDiscount ? "new-price" : "normal-price"}>
+
+                <span className={hasDiscount ? "current-price" : "normal-price"}>
                   ₹{finalPrice}
                 </span>
               </p>

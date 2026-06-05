@@ -41,8 +41,8 @@ function TopsDetails() {
     .slice(0, 6);
 
   const isWishlisted = wishlist.some(
-  (item) => item.productId === top.id
-);
+    (item) => item.productId === top.id
+  );
 
   const hasDiscount = top.discount && top.discount > 0;
   const finalPrice = getFinalPrice(top.price, top.discount);
@@ -66,13 +66,20 @@ function TopsDetails() {
       <h2>{top.name}</h2>
 
       {/* PRICE */}
-      <p className="price">
+      <p className="price-row">
         {hasDiscount && (
-          <span className="old-price">₹{top.price}</span>
+          <span className="original-price">₹{top.price}</span>
         )}
-        <span className={hasDiscount ? "new-price" : "normal-price"}>
+
+        <span className={hasDiscount ? "current-price" : "normal-price"}>
           ₹{finalPrice}
         </span>
+
+        {/* {hasDiscount && (
+          <span className="discount-text">
+            {top.discount}% OFF
+          </span>
+        )} */}
       </p>
 
       {/* COLOR */}
@@ -95,6 +102,7 @@ function TopsDetails() {
       {/* ACTIONS */}
       <div className="action-bar">
         <button
+          type="button"
           onClick={() => toggleWishlist(top)}
           className="wishlist-btn"
         >
@@ -139,11 +147,12 @@ function TopsDetails() {
             >
               <img src={item.image} alt={item.name} />
               <p className="name">{item.name}</p>
-              <p className="price">
+              <p className="price-row">
                 {hasDiscount && (
-                  <span className="old-price">₹{item.price}</span>
+                  <span className="original-price">₹{item.price}</span>
                 )}
-                <span className={hasDiscount ? "new-price" : "normal-price"}>
+
+                <span className={hasDiscount ? "current-price" : "normal-price"}>
                   ₹{finalPrice}
                 </span>
               </p>
