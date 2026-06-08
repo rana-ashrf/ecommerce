@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   FaUser,
   FaEnvelope,
   FaPhone,
   FaLock,
-  FaEye,
-  FaEyeSlash,
 } from "react-icons/fa";
 import Navbar from "./Navbar";
+import API from "../api/axios";
 
 function Register() {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
     username: "",
@@ -50,39 +47,45 @@ function Register() {
     }
 
     try {
-      const check = await axios.get(
-        `http://localhost:5000/users?email=${form.email}`
-      );
-
-      if (check.data.length > 0) {
-        toast.error("Email already registered. Please login.");
-        return;
-      }
-
-      await axios.post("http://localhost:5000/users", {
+      await API.post("/accounts/register/", {
         username: form.username,
         email: form.email,
         phone: form.phone,
         password: form.password,
+        confirm_password: form.confirmPassword,
       });
 
       toast.success("Registered successfully ✨");
       navigate("/login");
     } catch (err) {
-      toast.error("Server not responding");
+      const data = err.response?.data;
+
+      if (data?.email) {
+        toast.error(data.email[0]);
+      } else if (data?.username) {
+        toast.error(data.username[0]);
+      } else if (data?.non_field_errors) {
+        toast.error(data.non_field_errors[0]);
+      } else if (typeof data === "string") {
+        toast.error(data);
+      } else {
+        toast.error("Registration failed");
+      }
     }
   };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
       <Navbar textColor="black" />
+
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md space-y-4"
       >
-        <h2 className="text-center text-2xl font-semibold">Create Account</h2>
+        <h2 className="text-center text-2xl font-semibold">
+          Create Account
+        </h2>
 
-        {/* Username */}
         <div className="relative">
           <FaUser className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -93,7 +96,6 @@ function Register() {
           />
         </div>
 
-        {/* Email */}
         <div className="relative">
           <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -104,7 +106,6 @@ function Register() {
           />
         </div>
 
-        {/* Phone */}
         <div className="relative">
           <FaPhone className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -115,20 +116,17 @@ function Register() {
           />
         </div>
 
-        {/* Password */}
         <div className="relative">
           <FaLock className="absolute left-3 top-3 text-gray-400" />
           <input
-            type={showPassword ? "text" : "password"}
+            type="password"
             name="password"
             placeholder="Password"
             onChange={handleChange}
             className="border w-full p-2 pl-10 rounded"
           />
-          
         </div>
 
-        {/* Confirm Password */}
         <input
           type="password"
           name="confirmPassword"
@@ -141,7 +139,6 @@ function Register() {
           Register
         </button>
 
-        {/* Already registered */}
         <p className="text-center text-sm text-gray-600">
           Already have an account?{" "}
           <Link to="/login" className="text-black font-medium hover:underline">

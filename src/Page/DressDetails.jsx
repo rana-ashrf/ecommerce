@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "../styles/DressDetails.css";
 import { useWishlist } from "../Context/WishlistContext";
@@ -21,12 +21,12 @@ function DressDetails() {
   const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/dresses/${id}`)
+    API
+      .get(`/products/${id}/`)
       .then((res) => setDress(res.data));
 
-    axios
-      .get("http://localhost:5000/dresses")
+    API
+      .get("/products/?category=Dresses")
       .then((res) => setAllDresses(res.data));
 
     setSelectedSize("");
@@ -37,13 +37,13 @@ function DressDetails() {
   const related = allDresses
     .filter(
       (item) =>
-        item.category === dress.category &&
+        item.subcategoryName === dress.subcategoryName &&
         item.id !== dress.id
     )
     .slice(0, 6);
 
   const isWishlisted = wishlist.some(
-    (item) => item.productId === dress.id
+    (item) => Number(item.productId) === Number(dress.id)
   );
 
   const hasDiscount = dress.discount && dress.discount > 0;
@@ -95,7 +95,7 @@ function DressDetails() {
         <p>
           <b>SIZE</b>
         </p>
-        {dress.size.map((s) => (
+        {dress.size?.map((s) => (
           <button
             key={s}
             className={

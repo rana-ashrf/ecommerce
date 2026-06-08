@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
+import { useWishlist } from "../Context/WishlistContext";
 import "../styles/Dresses.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -19,6 +20,7 @@ function Tops() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [tops, setTops] = useState([]);
+  const { toggleWishlist } = useWishlist();
 
   const category = searchParams.get("category") || "All";
   const sort = searchParams.get("sort") || "";
@@ -28,7 +30,7 @@ function Tops() {
   const max = searchParams.get("max") ? Number(searchParams.get("max")) : 5000;
 
   useEffect(() => {
-    axios.get("http://localhost:5000/Tops")
+    API.get("/products/?category=Tops")
       .then(res => setTops(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -44,12 +46,11 @@ function Tops() {
   };
 
   let filtered = tops.filter(item =>
-    item.active !== false &&
-    (category === "All" || item.category === category) &&
+    (category === "All" || item.subcategoryName === category) &&
     (!color || item.color === color) &&
-    (!size || item.size.includes(size)) &&
-    item.price >= min &&
-    item.price <= max
+    (!size || item.size?.includes(size)) &&
+    Number(item.price) >= min &&
+    Number(item.price) <= max
   );
 
   if (sort === "low-high") {
@@ -152,16 +153,24 @@ function Tops() {
         ) : (
           <div className="product-grid">
             {filtered.map(item => {
-              const hasDiscount = item.discount && item.discount > 0;
+              const hasDiscount = Number(item.discount) > 0;
               const finalPrice = getFinalPrice(item.price, item.discount);
               return (
                 <div key={item.id} className="product-card" onClick={() => navigate(`/tops/${item.id}?${searchParams.toString()}`)}>
                   <div className="image-wrapper">
                     {hasDiscount && <span className="discount-badge">{item.discount}% OFF</span>}
                     <img src={item.image} alt={item.name} />
-                    {/* <button className="wishlist-btn" onClick={(e) => e.stopPropagation()}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
-                    </button> */}
+                    <button
+                      className="wishlist-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(item);
+                      }}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                      </svg>
+                    </button>
                     <div className="image-overlay"><button className="quick-btn">Quick View</button></div>
                   </div>
                   <div className="product-info">

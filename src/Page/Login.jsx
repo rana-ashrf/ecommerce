@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useAuth } from "../Context/AuthContext";
 import Navbar from "./Navbar";
+import API from "../api/axios";
 
 function Login() {
   const navigate = useNavigate();
@@ -16,7 +16,6 @@ function Login() {
     password: "",
   });
 
-  // 🔒 Already logged in protection
   useEffect(() => {
     if (user) {
       navigate("/account", { replace: true });
@@ -35,27 +34,22 @@ function Login() {
     }
 
     try {
-      const res = await axios.get(
-        `http://localhost:5000/users?email=${form.email}&password=${form.password}`
-      );
+      const res = await API.post("/accounts/login/", {
+        email: form.email,
+        password: form.password,
+      });
 
-      if (res.data.length > 0) {
-        const loggedUser = res.data[0];
+      toast.success("Login successful ✨");
 
-        /* 🚫 BLOCKED USER CHECK (NEW) */
-        if (loggedUser.blocked) {
-          toast.error("Your account has been blocked by admin");
-          return;
-        }
+      login(res.data.user, res.data.access, res.data.refresh);
 
-        toast.success("Login successful ✨");
-        login(loggedUser);
-        navigate("/account", { replace: true });
-      } else {
-        toast.error("Invalid email or password");
-      }
+      navigate("/account", { replace: true });
     } catch (err) {
-      toast.error("Server not responding");
+      toast.error(
+        err.response?.data?.non_field_errors?.[0] ||
+          err.response?.data?.detail ||
+          "Invalid email or password"
+      );
     }
   };
 
@@ -71,7 +65,6 @@ function Login() {
           Welcome Back
         </h2>
 
-        {/* Email */}
         <div className="relative">
           <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -83,7 +76,6 @@ function Login() {
           />
         </div>
 
-        {/* Password */}
         <div className="relative">
           <FaLock className="absolute left-3 top-3 text-gray-400" />
           <input
@@ -94,6 +86,7 @@ function Login() {
             onChange={handleChange}
             className="border w-full p-2 pl-10 rounded focus:outline-none focus:ring-2 focus:ring-black"
           />
+
           <span
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-3 cursor-pointer text-gray-500"

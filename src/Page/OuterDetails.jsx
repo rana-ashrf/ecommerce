@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "../styles/DressDetails.css";
 import { useWishlist } from "../Context/WishlistContext";
@@ -21,11 +21,11 @@ function OuterDetails() {
   const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/outerwear/${id}`)
+    API.get(`/products/${id}/`)
       .then(res => setTop(res.data))
       .catch(err => console.error(err));
 
-    axios.get("http://localhost:5000/outerwear")
+    API.get("/products/?category=Outerwear")
       .then(res => setAllTops(res.data))
       .catch(err => console.error(err));
 
@@ -35,11 +35,11 @@ function OuterDetails() {
   if (!top) return <p>Loading...</p>;
 
   const related = allTops
-    .filter(item => item.category === top.category && item.id !== top.id)
+    .filter(item => item.subcategoryName === top.subcategoryName && item.id !== top.id)
     .slice(0, 6);
 
   const isWishlisted = wishlist.some(
-    (item) => item.productId === top.id
+    (item) => Number(item.productId) === Number(top.id)
   );
 
   const hasDiscount = top.discount && top.discount > 0;
@@ -70,7 +70,7 @@ function OuterDetails() {
           ₹{finalPrice}
         </span>
 
-        
+
       </p>
 
       <p><b>COLOR:</b> {top.color}</p>
@@ -78,7 +78,7 @@ function OuterDetails() {
       {/* SIZE */}
       <div className="sizes">
         <p><b>SIZE</b></p>
-        {top.size.map(s => (
+        {top.size?.map(s => (
           <button
             key={s}
             className={selectedSize === s ? "active" : ""}

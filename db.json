@@ -2607,28 +2607,39 @@
   ],
   "cart": [
     {
+      "id": "e9ec",
       "userId": "6ea4",
-      "productId": "2",
-      "title": "Ines tweed Mini Dress",
-      "image": "/images/mini2.jpg",
-      "url": "/dresses",
-      "size": "S",
-      "qty": 1,
-      "price": 1619,
-      "originalPrice": 1799,
-      "id": "1"
-    },
-    {
-      "id": "4c4d",
-      "userId": "6ea4",
-      "productId": "138",
-      "title": "Puffer Coat",
-      "image": "/images/coat2.jpeg",
+      "productId": "139",
+      "title": "Wool Blend Coat",
+      "image": "/images/coat3.jpeg",
       "url": "/outerwear",
       "size": "S",
       "qty": 1,
-      "price": 1113,
-      "originalPrice": 1590
+      "price": 945,
+      "originalPrice": 1890
+    },
+    {
+      "id": "1b2f",
+      "userId": 3,
+      "productId": "3",
+      "title": "White ruffled Mini Dress",
+      "image": "/images/mini3.jpg",
+      "url": "/dresses",
+      "size": "M",
+      "qty": 1,
+      "price": 1599,
+      "originalPrice": 1999
+    },
+    {
+      "id": "ba4b",
+      "userId": 3,
+      "productId": 37,
+      "title": "Ladies Elegant Solid Color flare Sleeve dress",
+      "image": "http://127.0.0.1:8000/media/products/Tops1.jpg",
+      "size": "M",
+      "qty": 1,
+      "price": "1899.00",
+      "originalPrice": "1899.00"
     }
   ],
   "wishlist": [
@@ -3342,6 +3353,46 @@
         "type": "work"
       },
       "id": "YWxEuLn"
+    },
+    {
+      "id": "caf0",
+      "userId": "6ea4",
+      "items": [
+        {
+          "id": "4c4d",
+          "userId": "6ea4",
+          "productId": "138",
+          "title": "Puffer Coat",
+          "image": "/images/coat2.jpeg",
+          "url": "/outerwear",
+          "size": "S",
+          "qty": 1,
+          "price": 1113,
+          "originalPrice": 1590
+        }
+      ],
+      "status": "Placed",
+      "orderDate": "2026-06-05T05:18:56.225Z",
+      "deliveryDate": "2026-06-12T05:18:56.225Z",
+      "totalAmount": 1113,
+      "coupon": null,
+      "discount": 0,
+      "address": {
+        "id": "c821",
+        "name": "najma",
+        "phone": "9748362842",
+        "house": "120",
+        "area": "Valapattanam",
+        "city": "Kannur",
+        "state": "Kerala",
+        "pincode": "670602",
+        "userId": "6ea4",
+        "isDefault": true,
+        "type": "work"
+      },
+      "paymentMethod": "cod",
+      "paymentStatus": "Pending",
+      "paymentData": null
     }
   ],
   "returns": [

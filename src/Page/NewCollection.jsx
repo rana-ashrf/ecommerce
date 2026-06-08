@@ -7,7 +7,6 @@ function NewCollection() {
   const [columns, setColumns] = useState(5);
   const navigate = useNavigate();
 
- 
   useEffect(() => {
     const updateColumns = () => {
       const width = window.innerWidth;
@@ -25,41 +24,29 @@ function NewCollection() {
   }, []);
 
   useEffect(() => {
-    Promise.all([
-      axios.get("http://localhost:5000/dresses"),
-      axios.get("http://localhost:5000/Tops"),
-      axios.get("http://localhost:5000/bottoms"),
-      axios.get("http://localhost:5000/knitwear"),
-      axios.get("http://localhost:5000/outerwear"),
-    ])
-      .then((responses) => {
-        const categories = [
-          "dresses",
-          "Tops",
-          "bottoms",
-          "knitwear",
-          "outerwear",
-        ];
-
-        const allItems = responses.flatMap((res, index) =>
-          res.data.map((item) => ({
-            ...item,
-            category: categories[index],
-          }))
+    const fetchLatestProducts = async () => {
+      try {
+        const res = await axios.get(
+          "http://127.0.0.1:8000/api/products/?latest=true"
         );
 
-        const latest = allItems
-          .sort((a, b) => Number(b.id) - Number(a.id))
-          .slice(0, 12);
+        setItems(res.data);
+      } catch (err) {
+        console.log("Failed to load latest products", err);
+      }
+    };
 
-        setItems(latest);
-      })
-      .catch((err) => console.log(err));
+    fetchLatestProducts();
   }, []);
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+      <h2
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+        }}
+      >
         NEW COLLECTION
       </h2>
 
@@ -72,10 +59,13 @@ function NewCollection() {
       >
         {items.map((item) => (
           <div
-            key={`${item.category}-${item.id}`}
-            style={{ textAlign: "center", cursor: "pointer" }}
+            key={item.id}
+            style={{
+              textAlign: "center",
+              cursor: "pointer",
+            }}
             onClick={() =>
-              navigate(`/product/${item.category}/${item.id}`)
+              navigate(`/product/${item.categoryName}/${item.id}`)
             }
           >
             <img
@@ -88,11 +78,21 @@ function NewCollection() {
               }}
             />
 
-            <p style={{ fontSize: "13px", marginTop: "8px" }}>
+            <p
+              style={{
+                fontSize: "13px",
+                marginTop: "8px",
+              }}
+            >
               {item.name}
             </p>
 
-            <p style={{ fontWeight: "bold", fontSize: "14px" }}>
+            <p
+              style={{
+                fontWeight: "bold",
+                fontSize: "14px",
+              }}
+            >
               ₹{item.price}
             </p>
           </div>

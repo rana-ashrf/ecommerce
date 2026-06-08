@@ -2,10 +2,10 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect
+  useEffect,
 } from "react";
-import axios from "axios";
 import { useAuth } from "./AuthContext";
+import API from "../api/axios";
 
 const WishlistContext = createContext();
 
@@ -13,7 +13,6 @@ export const WishlistProvider = ({ children }) => {
   const { user } = useAuth();
   const [wishlist, setWishlist] = useState([]);
 
-  // LOAD WISHLIST
   useEffect(() => {
     if (!user) {
       setWishlist([]);
@@ -22,9 +21,7 @@ export const WishlistProvider = ({ children }) => {
 
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/wishlist?userId=${user.id}`
-        );
+        const res = await API.get("/wishlist/");
         setWishlist(res.data);
       } catch (err) {
         console.error("Failed to load wishlist", err);
@@ -35,39 +32,28 @@ export const WishlistProvider = ({ children }) => {
   }, [user]);
 
   const toggleWishlist = async (product) => {
-    if (!user) return;
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
 
     const exists = wishlist.find(
-      (item) => item.productId === product.id
+      (item) => Number(item.productId) === Number(product.id)
     );
 
     if (exists) {
       try {
-        await axios.delete(
-          `http://localhost:5000/wishlist/${exists.id}`
-        );
-        setWishlist(
-          wishlist.filter((item) => item.id !== exists.id)
-        );
+        await API.delete(`/wishlist/${exists.id}/`);
+        setWishlist(wishlist.filter((item) => item.id !== exists.id));
       } catch (err) {
         console.error("Failed to remove wishlist item", err);
       }
     } else {
-      const payload = {
-        userId: user.id,
-        productId: product.id,
-        name: product.name,
-        image: product.image,
-        url: product.url,
-        price: product.price,
-        discount: product.discount || 0
-      };
-
       try {
-        const res = await axios.post(
-          "http://localhost:5000/wishlist",
-          payload
-        );
+        const res = await API.post("/wishlist/", {
+          productId: product.id,
+        });
+
         setWishlist([...wishlist, res.data]);
       } catch (err) {
         console.error("Failed to add wishlist item", err);
@@ -77,17 +63,14 @@ export const WishlistProvider = ({ children }) => {
 
   const removeFromWishlist = async (productId) => {
     const exists = wishlist.find(
-      (item) => item.productId === productId
+      (item) => Number(item.productId) === Number(productId)
     );
+
     if (!exists) return;
 
     try {
-      await axios.delete(
-        `http://localhost:5000/wishlist/${exists.id}`
-      );
-      setWishlist(
-        wishlist.filter((i) => i.id !== exists.id)
-      );
+      await API.delete(`/wishlist/${exists.id}/`);
+      setWishlist(wishlist.filter((i) => i.id !== exists.id));
     } catch (err) {
       console.error("Failed to remove wishlist item", err);
     }
@@ -98,7 +81,7 @@ export const WishlistProvider = ({ children }) => {
       value={{
         wishlist,
         toggleWishlist,
-        removeFromWishlist
+        removeFromWishlist,
       }}
     >
       {children}

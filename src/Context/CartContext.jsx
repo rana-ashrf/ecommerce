@@ -4,8 +4,8 @@ import {
   useState,
   useEffect
 } from "react";
-import axios from "axios";
-import { getFinalPrice } from "../utils/price";
+
+import API from "../api/axios";
 import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cart, setCart] = useState([]);
 
-  // LOAD CART FROM API
+  // LOAD CART FROM DJANGO BACKEND
   useEffect(() => {
     if (!user) {
       setCart([]);
@@ -23,9 +23,7 @@ export const CartProvider = ({ children }) => {
 
     const fetchCart = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/cart?userId=${user.id}`
-        );
+        const res = await API.get("/cart/");
         setCart(res.data);
       } catch (err) {
         console.error("Failed to load cart", err);
@@ -39,38 +37,23 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (product, size) => {
     if (!user) return;
 
-    const finalPrice = getFinalPrice(
-      product.price,
-      product.discount
-    );
-
     const exists = cart.find(
       (item) =>
         item.productId === product.id && item.size === size
     );
+
     if (exists) return;
 
     const payload = {
-      userId: user.id,
-      productId: product.id, // original product id
-      title: product.name,
-      image: product.image,
-      url: product.url,           // should exist in your db for navigation
-      collection: product.collection, // for price sync etc
-      size,
-      qty: 1,
-      price: finalPrice,
-      originalPrice: product.price
+      productId: product.id,
+      size: size
     };
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/cart",
-        payload
-      );
-      setCart([...cart, res.data]);
+      const res = await API.post("/cart/", payload);
+      setCart((prev) => [...prev, res.data]);
     } catch (err) {
-      console.error("Failed to add to cart", err);
+      console.error("Failed to add to cart", err.response?.data || err);
     }
   };
 
@@ -80,53 +63,53 @@ export const CartProvider = ({ children }) => {
         item.productId === productId && item.size === size
     );
 
+  // REMOVE FROM CART
   const removeFromCart = async (productId, size) => {
     const item = cart.find(
       (i) => i.productId === productId && i.size === size
     );
+
     if (!item) return;
 
     try {
-      await axios.delete(
-        `http://localhost:5000/cart/${item.id}`
-      );
-      setCart(cart.filter((i) => i.id !== item.id));
+      await API.delete(`/cart/${item.id}/`);
+      setCart((prev) => prev.filter((i) => i.id !== item.id));
     } catch (err) {
-      console.error("Failed to remove cart item", err);
+      console.error("Failed to remove cart item", err.response?.data || err);
     }
   };
 
+  // UPDATE QUANTITY
   const updateQty = async (productId, size, qty) => {
     if (qty < 1) return;
 
     const item = cart.find(
       (i) => i.productId === productId && i.size === size
     );
+
     if (!item) return;
 
     try {
-      const res = await axios.patch(
-        `http://localhost:5000/cart/${item.id}`,
-        { qty }
-      );
-      setCart(
-        cart.map((i) => (i.id === item.id ? res.data : i))
+      const res = await API.patch(`/cart/${item.id}/`, { qty });
+
+      setCart((prev) =>
+        prev.map((i) => (i.id === item.id ? res.data : i))
       );
     } catch (err) {
-      console.error("Failed to update quantity", err);
+      console.error("Failed to update quantity", err.response?.data || err);
     }
   };
 
+  // CLEAR CART
   const clearCart = async () => {
     try {
       await Promise.all(
-        cart.map((i) =>
-          axios.delete(`http://localhost:5000/cart/${i.id}`)
-        )
+        cart.map((i) => API.delete(`/cart/${i.id}/`))
       );
+
       setCart([]);
     } catch (err) {
-      console.error("Failed to clear cart", err);
+      console.error("Failed to clear cart", err.response?.data || err);
     }
   };
 

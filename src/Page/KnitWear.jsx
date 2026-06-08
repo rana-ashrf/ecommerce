@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
+import { useWishlist } from "../Context/WishlistContext";
 import "../styles/Dresses.css";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
@@ -23,20 +24,20 @@ function KnitWear() {
   const [color, setColor] = useState("");
   const [size, setSize] = useState("");
   const [price, setPrice] = useState([0, 5000]);
+  const { toggleWishlist } = useWishlist();
 
   useEffect(() => {
-    axios.get("http://localhost:5000/knitwear")
+    API.get("/products/?category=Knitwear")
       .then(res => setTops(res.data))
       .catch(err => console.error(err));
   }, []);
 
   let filtered = tops.filter(item =>
-    item.active !== false &&
-    (category === "All" || item.category === category) &&
+    (category === "All" || item.subcategoryName === category) &&
     (!color || item.color === color) &&
-    (!size || item.size.includes(size)) &&
-    item.price >= price[0] &&
-    item.price <= price[1]
+    (!size || item.size?.includes(size)) &&
+    Number(item.price) >= price[0] &&
+    Number(item.price) <= price[1]
   );
 
   if (sort === "low-high") {
@@ -143,14 +144,20 @@ function KnitWear() {
         ) : (
           <div className="product-grid">
             {filtered.map(item => {
-              const hasDiscount = item.discount && item.discount > 0;
+              const hasDiscount = Number(item.discount) > 0;
               const finalPrice = getFinalPrice(item.price, item.discount);
               return (
                 <div key={item.id} className="product-card" onClick={() => navigate(`/knitwear/${item.id}`)}>
                   <div className="image-wrapper">
                     {hasDiscount && <span className="discount-badge">{item.discount}% OFF</span>}
                     <img src={item.image} alt={item.name} />
-                    <button className="wishlist-btn" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="wishlist-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(item);
+                      }}
+                    >
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
                     </button>
                     <div className="image-overlay"><button className="quick-btn">Quick View</button></div>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 
 const AuthContext = createContext();
 
@@ -8,40 +8,38 @@ export const AuthProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem("user"));
   });
 
-  /* 🔐 LOGIN */
-  const login = (userData) => {
+  const login = (userData, access, refresh) => {
     localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("access", access);
+    localStorage.setItem("refresh", refresh);
     setUser(userData);
   };
 
-  /* 🔓 LOGOUT */
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     setUser(null);
   };
 
-  /* 🚨 AUTO LOGOUT IF USER IS BLOCKED */
   useEffect(() => {
     if (!user) return;
 
-    const checkBlockedStatus = async () => {
+    const checkUser = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/users/${user.id}`
-        );
+        const res = await API.get("/accounts/profile/");
 
-        if (res.data.blocked) {
+        if (res.data.is_blocked) {
           alert("Your account has been blocked by admin");
           logout();
         }
       } catch (err) {
-        console.error("User verification failed");
         logout();
       }
     };
 
-    checkBlockedStatus();
-  }, [user]);
+    checkUser();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
