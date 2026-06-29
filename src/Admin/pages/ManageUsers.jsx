@@ -14,37 +14,30 @@ function ManageUsers() {
     fetchUsers();
   }, []);
 
+  const API_URL = "http://127.0.0.1:8000/api/admin/users/";
+
   const fetchUsers = async () => {
-    // ✅ Load users + orders from json-server
-    const [usersRes, ordersRes] = await Promise.all([
-      axios.get("http://localhost:5000/users"),
-      axios.get("http://localhost:5000/orders"),
-    ]);
+    try {
+      const res = await axios.get(API_URL, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("adminAccessToken")}`,
+        },
+      });
 
-    const orders = ordersRes.data;
-
-    const enriched = usersRes.data.map((u) => {
-      const userOrders = orders.filter((o) => o.userId === u.id);
-
-      const totalSpent = userOrders.reduce(
-        (sum, o) => sum + (o.totalAmount || 0),
-        0
-      );
-
-      return {
+      const formatted = res.data.map((u) => ({
         ...u,
-        ordersCount: userOrders.length,
-        totalSpent,
-        status: u.blocked ? "Blocked" : "Active",
-      };
-    });
+        status: u.is_blocked ? "Blocked" : "Active",
+      }));
 
-    setUsers(enriched);
+      setUsers(formatted);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const totalUsers = users.length;
-  const activeUsers = users.filter((u) => !u.blocked).length;
-  const blockedUsers = users.filter((u) => u.blocked).length;
+  const activeUsers = users.filter((u) => !u.is_blocked).length;
+  const blockedUsers = users.filter((u) => u.is_blocked).length;
 
   const filteredUsers = users.filter(
     (u) =>
@@ -58,10 +51,21 @@ function ManageUsers() {
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   const toggleBlock = async (user) => {
-    await axios.patch(`http://localhost:5000/users/${user.id}`, {
-      blocked: !user.blocked,
-    });
-    fetchUsers();
+    try {
+      await axios.patch(
+        `http://127.0.0.1:8000/api/admin/users/${user.id}/`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("adminAccessToken")}`,
+          },
+        }
+      );
+
+      fetchUsers();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -125,8 +129,8 @@ function ManageUsers() {
                     <span
                       style={{
                         ...badge,
-                        background: u.blocked ? "#fee2e2" : "#dcfce7",
-                        color: u.blocked ? "#991b1b" : "#166534",
+                        background: u.is_blocked ? "#fee2e2" : "#dcfce7",
+                        color: u.is_blocked ? "#991b1b" : "#166534",
                       }}
                     >
                       {u.status}
@@ -138,7 +142,7 @@ function ManageUsers() {
                       View
                     </button>
                     <button style={blockBtn} onClick={() => toggleBlock(u)}>
-                      {u.blocked ? "Unblock" : "Block"}
+                      {u.is_blocked ? "Unblock" : "Block"}
                     </button>
                   </td>
                 </tr>

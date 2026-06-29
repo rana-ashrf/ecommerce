@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AdminSidebar from "../components/AdminSidebar";
 
-const CATEGORIES = ["dresses", "Tops", "bottoms", "knitwear", "outerwear"];
+// const CATEGORIES = ["dresses", "Tops", "bottoms", "knitwear", "outerwear"];
 
 function ManageSales() {
   const [products, setProducts] = useState([]);
@@ -27,33 +27,64 @@ function ManageSales() {
 
   /* =========== PRODUCTS (unchanged) =========== */
   const loadProducts = async () => {
-    let all = [];
-    for (let cat of CATEGORIES) {
-      const res = await axios.get(`http://localhost:5000/${cat}`);
-      all = [
-        ...all,
-        ...res.data.map((p) => ({
-          ...p,
-          category: cat,
-          discount: p.discount || 0,
-        })),
-      ];
+    try {
+      const token = localStorage.getItem("adminToken");
+
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/admin/products/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setProducts(res.data);
+    } catch (error) {
+      console.log(error);
     }
-    setProducts(all);
   };
 
   const updateDiscount = async (product, value) => {
-    await axios.patch(
-      `http://localhost:5000/${product.category}/${product.id}`,
-      { discount: Number(value) }
-    );
-    loadProducts();
+    try {
+      const token = localStorage.getItem("adminToken");
+
+      await axios.patch(
+        `http://127.0.0.1:8000/api/admin/products/${product.id}/`,
+        {
+          discount: Number(value),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      loadProducts();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   /* =========== COUPONS NOW FROM JSON-SERVER =========== */
   const loadCoupons = async () => {
-    const res = await axios.get("http://localhost:5000/coupons");
-    setCoupons(res.data);
+    try {
+      const token = localStorage.getItem("adminAccessToken");
+
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/admin/coupons/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setCoupons(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const saveCoupon = async () => {
@@ -62,16 +93,33 @@ function ManageSales() {
       return;
     }
 
-    const newCoupon = {
-      ...couponForm,
-      code: couponForm.code.toUpperCase(),
-      value: Number(couponForm.value),
-      minAmount: Number(couponForm.minAmount) || 0,
-      used: false,
-      active: true,
-    };
+    // const newCoupon = {
+    //   ...couponForm,
+    //   code: couponForm.code.toUpperCase(),
+    //   value: Number(couponForm.value),
+    //   minAmount: Number(couponForm.minAmount) || 0,
+    //   used: false,
+    //   active: true,
+    // };
 
-    await axios.post("http://localhost:5000/coupons", newCoupon);
+    const token = localStorage.getItem("adminAccessToken");
+
+    await axios.post(
+      "http://127.0.0.1:8000/api/admin/coupons/",
+      {
+        code: couponForm.code.toUpperCase(),
+        type: couponForm.type,
+        value: couponForm.value,
+        minAmount: couponForm.minAmount || 0,
+        expiry: couponForm.expiry,
+        active: true,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     // reload from server
     await loadCoupons();
@@ -88,16 +136,34 @@ function ManageSales() {
   };
 
   const toggleCoupon = async (coupon) => {
+    const token = localStorage.getItem("adminAccessToken");
+
     await axios.patch(
-      `http://localhost:5000/coupons/${coupon.id}`,
-      { active: !coupon.active }
+      `http://127.0.0.1:8000/api/admin/coupons/${coupon.id}/`,
+      {
+        active: !coupon.active,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     loadCoupons();
   };
 
   const deleteCoupon = async (coupon) => {
     if (!window.confirm("Do you want to delete this coupon?")) return;
-    await axios.delete(`http://localhost:5000/coupons/${coupon.id}`);
+    const token = localStorage.getItem("adminAccessToken");
+
+    await axios.delete(
+      `http://127.0.0.1:8000/api/admin/coupons/${coupon.id}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     loadCoupons();
   };
 
@@ -118,7 +184,7 @@ function ManageSales() {
         <h2 style={title}>Manage Sales</h2>
 
         {/* PRODUCT DISCOUNTS */}
-        <section style={card}>
+        {/* <section style={card}>
           <h3 style={sectionTitle}>Product Discounts</h3>
 
           <input
@@ -186,7 +252,7 @@ function ManageSales() {
               Next
             </button>
           </div>
-        </section>
+        </section> */}
 
         {/* COUPONS */}
         <section style={{ ...card, marginTop: 40 }}>
@@ -261,7 +327,7 @@ function ManageSales() {
                 style={inputFull}
               >
                 <option value="percentage">Percentage (%)</option>
-                <option value="flat">Flat ₹</option>
+                <option value="fixed">Flat ₹</option>
               </select>
 
               <input

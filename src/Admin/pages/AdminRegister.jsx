@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AdminAPI from "../../api/adminAxios";
 
 function AdminRegister() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    name: "",
+    username: "",
     email: "",
     password: "",
+    phone: "",
     secretCode: "",
   });
 
@@ -15,7 +17,7 @@ function AdminRegister() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     if (form.secretCode !== "ADMIN2025") {
@@ -23,27 +25,20 @@ function AdminRegister() {
       return;
     }
 
-    const admins = JSON.parse(localStorage.getItem("admins")) || [];
+    try {
+      await AdminAPI.post("/admin/register/", {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+        phone: form.phone,
+      });
 
-    const exists = admins.some((a) => a.email === form.email);
-    if (exists) {
-      alert("Admin already exists");
-      return;
+      alert("Admin registered successfully");
+      navigate("/admin/login");
+    } catch (err) {
+      console.error(err.response?.data || err);
+      alert("Admin registration failed");
     }
-
-    const newAdmin = {
-      id: Date.now(),
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      role: "admin",
-      active: true,
-    };
-
-    localStorage.setItem("admins", JSON.stringify([...admins, newAdmin]));
-
-    alert("Admin registered successfully");
-    navigate("/admin/login");
   };
 
   return (
@@ -83,8 +78,9 @@ function AdminRegister() {
 
         <input
           type="text"
-          name="name"
-          placeholder="Admin Name"
+          name="username"
+          placeholder="Admin Username"
+          value={form.username}
           onChange={handleChange}
           required
           style={inputStyle}
@@ -94,6 +90,7 @@ function AdminRegister() {
           type="email"
           name="email"
           placeholder="Admin Email"
+          value={form.email}
           onChange={handleChange}
           required
           style={inputStyle}
@@ -103,6 +100,17 @@ function AdminRegister() {
           type="password"
           name="password"
           placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          style={inputStyle}
+        />
+
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone Number"
+          value={form.phone}
           onChange={handleChange}
           required
           style={inputStyle}
@@ -112,6 +120,7 @@ function AdminRegister() {
           type="password"
           name="secretCode"
           placeholder="Admin Secret Code"
+          value={form.secretCode}
           onChange={handleChange}
           required
           style={inputStyle}

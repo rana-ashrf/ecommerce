@@ -16,7 +16,7 @@ function Support() {
     },
     {
       question: "How can I contact customer support?",
-      answer: "You can reach us via WhatsApp, email, or phone anytime."
+      answer: "You can reach us via WhatsApp or email anytime."
     }
   ];
 
@@ -56,16 +56,10 @@ function Support() {
             className="support-card email"
           >
             ✉️ Email Support
-            <span>support@yourstore.com</span>
+            <span>ranashraf9526@gmail.com</span>
           </a>
 
-          <a
-            href="tel:+919999999999"
-            className="support-card call"
-          >
-            📞 Call Support
-            <span>+91 99999 99999</span>
-          </a>
+          
         </div>
       </div>
     </div>

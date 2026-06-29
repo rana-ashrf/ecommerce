@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "../styles/DressDetails.css";
 import "../styles/Dresses.css";
@@ -9,6 +8,7 @@ import Navbar from "./Navbar";
 import { useCart } from "../Context/CartContext";
 import { toast } from "react-toastify";
 import { getFinalPrice } from "../utils/price";
+import API from "../api/axios";
 
 function SaleProductDetails() {
   const { collection, id } = useParams();
@@ -22,41 +22,59 @@ function SaleProductDetails() {
   const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/${collection}/${id}`)
+    API.get(`/products/${id}/`)
       .then((res) => setProduct(res.data))
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        navigate("/sale");
+      });
 
-    axios
-      .get(`http://localhost:5000/${collection}`)
-      .then((res) =>
-        setAllProducts(
-          res.data.filter(
-            (item) => item.discount && item.id !== id
-          )
-        )
-      )
+    API.get(`/products/?category=${collection}`)
+      .then((res) => {
+        const discounted = res.data.filter(
+          (item) =>
+            Number(item.discount) > 0 &&
+            Number(item.id) !== Number(id)
+        );
+
+        setAllProducts(discounted);
+      })
       .catch((err) => console.error(err));
 
     setSelectedSize("");
-  }, [collection, id]);
+  }, [collection, id, navigate]);
 
   if (!product) return <p>Loading...</p>;
 
   const isWishlisted = wishlist.some(
-    (item) => item.productId === product.id
+    (item) => Number(item.productId) === Number(product.id)
   );
 
-  const finalPrice = getFinalPrice(
-    product.price,
-    product.discount
+  const finalPrice = getFinalPrice(product.price, product.discount);
+
+  const totalStock =
+    product.sizes?.reduce((sum, s) => sum + Number(s.stock), 0) || 0;
+
+  const selectedSizeObj = product.sizes?.find(
+    (s) => s.size === selectedSize
   );
 
   const handleAddToCart = () => {
+    if (totalStock === 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
     if (!selectedSize) {
       toast.error("Please select a size");
       return;
     }
+
+    if (!selectedSizeObj || Number(selectedSizeObj.stock) === 0) {
+      toast.error("Selected size is out of stock");
+      return;
+    }
+
     addToCart(product, selectedSize);
   };
 
@@ -72,7 +90,6 @@ function SaleProductDetails() {
           textAlign: "center",
         }}
       >
-        {/* IMAGE */}
         <img
           src={product.image}
           alt={product.name}
@@ -83,30 +100,19 @@ function SaleProductDetails() {
           }}
         />
 
-        {/* NAME */}
         <h2 style={{ fontSize: "20px", fontWeight: "500" }}>
           {product.name}
         </h2>
 
-        {/* PRICE */}
         <p className="price-row" style={{ justifyContent: "center" }}>
-          <span className="original-price">
-            ₹{product.price}
-          </span>
-
-          <span className="current-price">
-            ₹{finalPrice}
-          </span>
-
-          
+          <span className="original-price">₹{product.price}</span>
+          <span className="current-price">₹{finalPrice}</span>
         </p>
 
-        {/* COLOR */}
         <p style={{ marginBottom: "20px", fontSize: "14px" }}>
-          <b>COLOR:</b> {product.color || "Grey"}
+          <b>COLOR:</b> {product.color}
         </p>
 
-        {/* SIZE */}
         <p style={{ fontWeight: "600", marginBottom: "10px" }}>
           SIZE
         </p>
@@ -117,31 +123,47 @@ function SaleProductDetails() {
             justifyContent: "center",
             gap: "12px",
             marginBottom: "25px",
+            flexWrap: "wrap",
           }}
         >
-          {(product.size || ["S", "M", "L", "XL"]).map((s) => (
-            <button
-              key={s}
-              onClick={() => setSelectedSize(s)}
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "50%",
-                border:
-                  selectedSize === s
-                    ? "1.5px solid black"
-                    : "1px solid #ccc",
-                background: "white",
-                cursor: "pointer",
-                fontWeight: "500",
-              }}
-            >
-              {s}
-            </button>
+          {product.sizes?.map((s) => (
+            <div key={s.id} className="size-box">
+              <button
+                className={`${selectedSize === s.size ? "active" : ""} ${
+                  Number(s.stock) === 0 ? "out-size" : ""
+                }`}
+                onClick={() => {
+                  if (Number(s.stock) > 0) {
+                    setSelectedSize(s.size);
+                  }
+                }}
+                disabled={Number(s.stock) === 0}
+                style={{
+                  width: "42px",
+                  height: "42px",
+                  borderRadius: "50%",
+                  border:
+                    selectedSize === s.size
+                      ? "1.5px solid black"
+                      : "1px solid #ccc",
+                  background: "white",
+                  cursor:
+                    Number(s.stock) === 0 ? "not-allowed" : "pointer",
+                  fontWeight: "500",
+                }}
+              >
+                {s.size}
+              </button>
+
+              {Number(s.stock) > 0 && Number(s.stock) < 5 && (
+                <small className="low-stock">
+                  Only {s.stock} left
+                </small>
+              )}
+            </div>
           ))}
         </div>
 
-        {/* ACTIONS */}
         <div
           style={{
             display: "flex",
@@ -171,7 +193,22 @@ function SaleProductDetails() {
             )}
           </button>
 
-          {isInCart(product.id, selectedSize) ? (
+          {totalStock === 0 ? (
+            <button
+              disabled
+              style={{
+                flex: 1,
+                height: "46px",
+                borderRadius: "30px",
+                background: "#ccc",
+                color: "white",
+                border: "none",
+                cursor: "not-allowed",
+              }}
+            >
+              Out of Stock
+            </button>
+          ) : isInCart(product.id, selectedSize) ? (
             <button
               onClick={() => navigate("/cart")}
               style={{
@@ -197,9 +234,7 @@ function SaleProductDetails() {
                 background: selectedSize ? "#888" : "#ccc",
                 color: "white",
                 border: "none",
-                cursor: selectedSize
-                  ? "pointer"
-                  : "not-allowed",
+                cursor: selectedSize ? "pointer" : "not-allowed",
               }}
             >
               Add to Cart
@@ -207,7 +242,6 @@ function SaleProductDetails() {
           )}
         </div>
 
-        {/* RELATED */}
         {allProducts.length > 0 && (
           <>
             <h3 style={{ marginBottom: "20px" }}>
@@ -225,7 +259,7 @@ function SaleProductDetails() {
                 <div
                   key={item.id}
                   onClick={() =>
-                    navigate(`/sale/${collection}/${item.id}`)
+                    navigate(`/sale/${item.categoryName}/${item.id}`)
                   }
                   style={{ cursor: "pointer" }}
                 >
@@ -237,15 +271,13 @@ function SaleProductDetails() {
                       borderRadius: "12px",
                     }}
                   />
+
                   <p style={{ fontSize: "13px" }}>
                     {item.name}
                   </p>
+
                   <p className="new-price">
-                    ₹
-                    {getFinalPrice(
-                      item.price,
-                      item.discount
-                    )}
+                    ₹{getFinalPrice(item.price, item.discount)}
                   </p>
                 </div>
               ))}

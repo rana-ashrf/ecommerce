@@ -1,36 +1,30 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdminAuth } from "../../Context/AdminAuthContext";
+import AdminAPI from "../../api/adminAxios";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const { adminLogin } = useAdminAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🔐 Get registered admins
-    const admins = JSON.parse(localStorage.getItem("admins")) || [];
+    try {
+      const res = await AdminAPI.post("/admin/login/", {
+        email,
+        password,
+      });
 
-    // 🔍 Find matching admin
-    const admin = admins.find(
-      (a) =>
-        a.email === email &&
-        a.password === password &&
-        a.role === "admin" &&
-        a.active !== false
-    );
-
-    if (!admin) {
+      adminLogin(res.data);
+      navigate("/admin/dashboard", { replace: true });
+    } catch (err) {
+      console.error(err.response?.data || err);
       alert("Invalid admin credentials or admin blocked");
-      return;
     }
-
-    // ✅ Login success
-    adminLogin(admin);
-    navigate("/admin/dashboard", { replace: true });
   };
 
   return (
@@ -96,7 +90,7 @@ function AdminLogin() {
             fontSize: "13px",
           }}
         >
-          Don’t have an account? {" "}
+          Don’t have an account?{" "}
           <span
             onClick={() => navigate("/admin/register")}
             style={{

@@ -7,12 +7,16 @@ export const AdminAuthProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("admin")) || null
   );
 
-  const adminLogin = (adminData) => {
-    localStorage.setItem("admin", JSON.stringify(adminData));
-    setAdmin(adminData);
+  const adminLogin = (data) => {
+    localStorage.setItem("adminAccessToken", data.access);
+    localStorage.setItem("adminRefreshToken", data.refresh);
+    localStorage.setItem("admin", JSON.stringify(data.admin));
+    setAdmin(data.admin);
   };
 
   const adminLogout = () => {
+    localStorage.removeItem("adminAccessToken");
+    localStorage.removeItem("adminRefreshToken");
     localStorage.removeItem("admin");
     setAdmin(null);
   };

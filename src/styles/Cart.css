@@ -277,7 +277,7 @@
 }
 
 /* Mobile summary is hidden on desktop */
-.mobile-summary {
+.cart-mobile-summary {
   display: none;
 }
 
@@ -500,12 +500,12 @@
   }
 
   /* Show mobile summary inside left column (after items) */
-  .mobile-summary {
+  .cart-mobile-summary {
     display: block;
     margin-top: 24px;
   }
 
-  .mobile-summary .summary-card {
+  .cart-mobile-summary .summary-card {
     box-shadow: var(--shadow-sm);
   }
 }
@@ -567,6 +567,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

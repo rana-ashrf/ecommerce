@@ -22,9 +22,7 @@ function BottomDetails() {
 
   useEffect(() => {
     API.get(`/products/${id}/`)
-      .then((res) => {
-        setBottom(res.data);
-      })
+      .then((res) => setBottom(res.data))
       .catch((err) => {
         console.error(err);
         navigate("/bottoms");
@@ -51,12 +49,29 @@ function BottomDetails() {
     (item) => Number(item.productId) === Number(bottom.id)
   );
 
-  const hasDiscount = bottom.discount && bottom.discount > 0;
+  const hasDiscount = Number(bottom.discount) > 0;
   const finalPrice = getFinalPrice(bottom.price, bottom.discount);
 
+  const totalStock =
+    bottom.sizes?.reduce((sum, s) => sum + Number(s.stock), 0) || 0;
+
+  const selectedSizeObj = bottom.sizes?.find(
+    (s) => s.size === selectedSize
+  );
+
   const handleAddToCart = () => {
+    if (totalStock === 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
     if (!selectedSize) {
       toast.error("Please select a size");
+      return;
+    }
+
+    if (!selectedSizeObj || Number(selectedSizeObj.stock) === 0) {
+      toast.error("Selected size is out of stock");
       return;
     }
 
@@ -90,14 +105,28 @@ function BottomDetails() {
           <b>SIZE</b>
         </p>
 
-        {bottom.size?.map((s) => (
-          <button
-            key={s}
-            className={selectedSize === s ? "active" : ""}
-            onClick={() => setSelectedSize(s)}
-          >
-            {s}
-          </button>
+        {bottom.sizes?.map((s) => (
+          <div key={s.id} className="size-box">
+            <button
+              className={`${selectedSize === s.size ? "active" : ""} ${
+                Number(s.stock) === 0 ? "out-size" : ""
+              }`}
+              onClick={() => {
+                if (Number(s.stock) > 0) {
+                  setSelectedSize(s.size);
+                }
+              }}
+              disabled={Number(s.stock) === 0}
+            >
+              {s.size}
+            </button>
+
+            {Number(s.stock) > 0 && Number(s.stock) < 5 && (
+              <small className="low-stock">
+                Only {s.stock} left
+              </small>
+            )}
+          </div>
         ))}
       </div>
 
@@ -113,7 +142,11 @@ function BottomDetails() {
           )}
         </button>
 
-        {isInCart(bottom.id, selectedSize) ? (
+        {totalStock === 0 ? (
+          <button className="add-cart-btn" disabled>
+            Out of Stock
+          </button>
+        ) : isInCart(bottom.id, selectedSize) ? (
           <button
             className="go-cart-btn"
             onClick={() => navigate("/cart")}
@@ -135,7 +168,7 @@ function BottomDetails() {
 
       <div className="related-products">
         {related.map((item) => {
-          const hasDiscount = item.discount && item.discount > 0;
+          const hasDiscount = Number(item.discount) > 0;
           const finalPrice = getFinalPrice(item.price, item.discount);
 
           return (
@@ -145,6 +178,7 @@ function BottomDetails() {
               onClick={() => navigate(`/bottoms/${item.id}`)}
             >
               <img src={item.image} alt={item.name} />
+
               <p className="name">{item.name}</p>
 
               <p className="price-row">

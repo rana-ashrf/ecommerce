@@ -134,7 +134,7 @@ function Cart() {
             ))}
 
             {/* MOBILE: Move summary and promo here on small screens */}
-            <div className="mobile-summary">
+            <div className="cart-mobile-summary">
               <div className="summary-card">
                 <h2 className="summary-title">Order Summary</h2>
 

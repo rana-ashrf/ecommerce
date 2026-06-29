@@ -11,24 +11,22 @@ function ManageOrders() {
   }, []);
 
   const fetchAllOrders = async () => {
-    // ✅ Fetch users + orders from json-server
-    const [usersRes, ordersRes] = await Promise.all([
-      axios.get("http://localhost:5000/users"),
-      axios.get("http://localhost:5000/orders"),
-    ]);
+    try {
+      const token = localStorage.getItem("adminAccessToken");
 
-    const users = usersRes.data;
-    const allOrders = ordersRes.data.map((order) => {
-      const user = users.find((u) => u.id === order.userId);
-      return {
-        ...order,
-        userId: order.userId,
-        customer: user ? user.username : "Unknown",
-        email: user ? user.email : "",
-      };
-    });
+      const res = await axios.get(
+        "http://127.0.0.1:8000/api/admin/orders/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setOrders(allOrders.reverse());
+      setOrders(res.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   /* STATS */
@@ -46,10 +44,25 @@ function ManageOrders() {
 
   /* UPDATE STATUS → json-server */
   const updateStatus = async (order, newStatus) => {
-    await axios.patch(`http://localhost:5000/orders/${order.id}`, {
-      status: newStatus,
-    });
-    fetchAllOrders();
+    try {
+      const token = localStorage.getItem("adminAccessToken");
+
+      await axios.patch(
+        `http://127.0.0.1:8000/api/admin/orders/${order.id}/`,
+        {
+          status: newStatus,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      fetchAllOrders();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -117,10 +130,10 @@ function ManageOrders() {
                           o.status === "Delivered"
                             ? "#dcfce7"
                             : o.status === "Shipped"
-                            ? "#dbeafe"
-                            : o.status === "Cancelled"
-                            ? "#fee2e2"
-                            : "#fef3c7",
+                              ? "#dbeafe"
+                              : o.status === "Cancelled"
+                                ? "#fee2e2"
+                                : "#fef3c7",
                       }}
                     >
                       {o.status}

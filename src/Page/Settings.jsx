@@ -1,24 +1,81 @@
 import { useState } from "react";
 import "../styles/Settings.css";
+import API from "../api/axios";
+import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Settings() {
-  const [notifications, setNotifications] = useState(true);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-  const handlePasswordSubmit = (e) => {
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e) => {
+    setPasswordData({
+      ...passwordData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    alert("Password change feature will be added later");
-    setShowPasswordForm(false);
+
+    try {
+      setLoading(true);
+
+      await API.post("/settings/change-password/", passwordData);
+
+      alert("Password changed successfully. Please login again.");
+
+      logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Password change error:", err.response?.data || err);
+      alert(err.response?.data?.error || "Could not change password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      setLoading(true);
+
+      await API.delete("/settings/delete-account/");
+
+      alert("Your account has been deleted");
+
+      logout();
+      navigate("/register");
+    } catch (err) {
+      console.error("Delete account error:", err.response?.data || err);
+      alert(err.response?.data?.error || "Could not delete account");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="settings-container">
       <h2>Settings</h2>
 
-      {/* CHANGE PASSWORD */}
       <div className="settings-card">
         <div className="settings-header">
           <h3>Change Password</h3>
+
           <button onClick={() => setShowPasswordForm(!showPasswordForm)}>
             {showPasswordForm ? "Cancel" : "Change"}
           </button>
@@ -26,39 +83,51 @@ function Settings() {
 
         {showPasswordForm && (
           <form className="password-form" onSubmit={handlePasswordSubmit}>
-            <input type="password" placeholder="Current Password" required />
-            <input type="password" placeholder="New Password" required />
-            <input type="password" placeholder="Confirm New Password" required />
-            <button type="submit">Update Password</button>
+            <input
+              type="password"
+              name="currentPassword"
+              placeholder="Current Password"
+              value={passwordData.currentPassword}
+              onChange={handleChange}
+              required
+            />
+
+            <input
+              type="password"
+              name="newPassword"
+              placeholder="New Password"
+              value={passwordData.newPassword}
+              onChange={handleChange}
+              required
+            />
+
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm New Password"
+              value={passwordData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Updating..." : "Update Password"}
+            </button>
           </form>
         )}
       </div>
 
-      {/* NOTIFICATIONS */}
-      <div className="settings-card">
-        <h3>Notification Preferences</h3>
-
-        <label className="toggle-row">
-          <span>Email Notifications</span>
-          <input
-            type="checkbox"
-            checked={notifications}
-            onChange={() => setNotifications(!notifications)}
-          />
-        </label>
-      </div>
-
       <div className="settings-card disabled">
         <h3>Language</h3>
-        <select >
+        <select disabled>
           <option>English</option>
-          <option>Hindi</option>
-          <option>Malayalam</option>
         </select>
       </div>
 
-      <div className="settings-card danger disabled">
-        <button >Delete My Account</button>
+      <div className="settings-card danger">
+        <button onClick={handleDeleteAccount} disabled={loading}>
+          {loading ? "Deleting..." : "Delete My Account"}
+        </button>
       </div>
     </div>
   );

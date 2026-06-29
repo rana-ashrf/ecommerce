@@ -14,7 +14,6 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [cart, setCart] = useState([]);
 
-  // LOAD CART FROM DJANGO BACKEND
   useEffect(() => {
     if (!user) {
       setCart([]);
@@ -33,7 +32,6 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   }, [user]);
 
-  // ADD TO CART
   const addToCart = async (product, size) => {
     if (!user) return;
 
@@ -63,7 +61,6 @@ export const CartProvider = ({ children }) => {
         item.productId === productId && item.size === size
     );
 
-  // REMOVE FROM CART
   const removeFromCart = async (productId, size) => {
     const item = cart.find(
       (i) => i.productId === productId && i.size === size
@@ -79,7 +76,6 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // UPDATE QUANTITY
   const updateQty = async (productId, size, qty) => {
     if (qty < 1) return;
 
@@ -100,17 +96,8 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // CLEAR CART
-  const clearCart = async () => {
-    try {
-      await Promise.all(
-        cart.map((i) => API.delete(`/cart/${i.id}/`))
-      );
-
-      setCart([]);
-    } catch (err) {
-      console.error("Failed to clear cart", err.response?.data || err);
-    }
+  const clearCart = () => {
+    setCart([]);
   };
 
   return (

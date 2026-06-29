@@ -21,13 +21,13 @@ function DressDetails() {
   const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
-    API
-      .get(`/products/${id}/`)
-      .then((res) => setDress(res.data));
+    API.get(`/products/${id}/`)
+      .then((res) => setDress(res.data))
+      .catch((err) => console.error(err));
 
-    API
-      .get("/products/?category=Dresses")
-      .then((res) => setAllDresses(res.data));
+    API.get("/products/?category=Dresses")
+      .then((res) => setAllDresses(res.data))
+      .catch((err) => console.error(err));
 
     setSelectedSize("");
   }, [id]);
@@ -46,17 +46,35 @@ function DressDetails() {
     (item) => Number(item.productId) === Number(dress.id)
   );
 
-  const hasDiscount = dress.discount && dress.discount > 0;
-  const finalPrice = getFinalPrice(
-    dress.price,
-    dress.discount
+  const hasDiscount = Number(dress.discount) > 0;
+  const finalPrice = getFinalPrice(dress.price, dress.discount);
+
+  const totalStock =
+    dress.sizes?.reduce(
+      (sum, item) => sum + Number(item.stock),
+      0
+    ) || 0;
+
+  const selectedSizeObj = dress.sizes?.find(
+    (s) => s.size === selectedSize
   );
 
   const handleAddToCart = () => {
+    if (totalStock === 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
     if (!selectedSize) {
       toast.error("Please select a size");
       return;
     }
+
+    if (!selectedSizeObj || selectedSizeObj.stock === 0) {
+      toast.error("Selected size is out of stock");
+      return;
+    }
+
     addToCart(dress, selectedSize);
   };
 
@@ -72,7 +90,6 @@ function DressDetails() {
 
       <h2>{dress.name}</h2>
 
-      {/* PRICE */}
       <p className="price-row">
         {hasDiscount && (
           <span className="original-price">
@@ -80,31 +97,47 @@ function DressDetails() {
           </span>
         )}
 
-        <span className={hasDiscount ? "current-price" : "normal-price"}>
+        <span
+          className={
+            hasDiscount ? "current-price" : "normal-price"
+          }
+        >
           ₹{finalPrice}
         </span>
-
-
       </p>
+
       <p>
         <b>COLOR:</b> {dress.color}
       </p>
 
-      {/* SIZE */}
       <div className="sizes">
         <p>
           <b>SIZE</b>
         </p>
-        {dress.size?.map((s) => (
-          <button
-            key={s}
-            className={
-              selectedSize === s ? "active" : ""
-            }
-            onClick={() => setSelectedSize(s)}
-          >
-            {s}
-          </button>
+
+        {dress.sizes?.map((s) => (
+          <div key={s.id} className="size-box">
+            <button
+              className={`
+                ${selectedSize === s.size ? "active" : ""}
+                ${s.stock === 0 ? "out-size" : ""}
+              `}
+              onClick={() => {
+                if (s.stock > 0) {
+                  setSelectedSize(s.size);
+                }
+              }}
+              disabled={s.stock === 0}
+            >
+              {s.size}
+            </button>
+
+            {s.stock > 0 && s.stock < 5 && (
+              <small className="low-stock">
+                Only {s.stock} left
+              </small>
+            )}
+          </div>
         ))}
       </div>
 
@@ -120,7 +153,11 @@ function DressDetails() {
           )}
         </button>
 
-        {isInCart(dress.id, selectedSize) ? (
+        {totalStock === 0 ? (
+          <button className="add-cart-btn" disabled>
+            Out of Stock
+          </button>
+        ) : isInCart(dress.id, selectedSize) ? (
           <button
             className="go-cart-btn"
             onClick={() => navigate("/cart")}
@@ -138,15 +175,13 @@ function DressDetails() {
         )}
       </div>
 
-      {/* RELATED PRODUCTS */}
       <h3 className="related-title">
         Products that you might like
       </h3>
 
       <div className="related-products">
         {related.map((item) => {
-          const hasDiscount =
-            item.discount && item.discount > 0;
+          const hasDiscount = Number(item.discount) > 0;
           const finalPrice = getFinalPrice(
             item.price,
             item.discount
@@ -164,7 +199,9 @@ function DressDetails() {
                 src={item.image}
                 alt={item.name}
               />
+
               <p className="name">{item.name}</p>
+
               <p className="price-row">
                 {hasDiscount && (
                   <span className="original-price">
@@ -172,7 +209,13 @@ function DressDetails() {
                   </span>
                 )}
 
-                <span className={hasDiscount ? "current-price" : "normal-price"}>
+                <span
+                  className={
+                    hasDiscount
+                      ? "current-price"
+                      : "normal-price"
+                  }
+                >
                   ₹{finalPrice}
                 </span>
               </p>

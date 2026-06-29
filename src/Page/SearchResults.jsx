@@ -1,6 +1,6 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../api/axios";
 
 function SearchResults() {
   const [searchParams] = useSearchParams();
@@ -11,37 +11,15 @@ function SearchResults() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSearchResults = async () => {
       setLoading(true);
 
       try {
-        const sources = [
-          { url: "http://localhost:5000/dresses", route: "dresses" },
-          { url: "http://localhost:5000/Tops", route: "tops" },
-          { url: "http://localhost:5000/bottoms", route: "bottoms" },
-          { url: "http://localhost:5000/outerwear", route: "outerwear" },
-          { url: "http://localhost:5000/knitwear", route: "knitwear" },
-        ];
-
-        const responses = await Promise.all(
-          sources.map((s) => axios.get(s.url))
+        const res = await API.get(
+          `/products/?search=${query}`
         );
 
-        const allProducts = responses.flatMap((res, index) =>
-          res.data.map((item) => ({
-            ...item,
-            categoryRoute: sources[index].route,
-          }))
-        );
-
-        const filtered = allProducts.filter((item) =>
-          [item.name, item.category, item.subCategory]
-            .join(" ")
-            .toLowerCase()
-            .includes(query.toLowerCase())
-        );
-
-        setResults(filtered);
+        setResults(res.data);
       } catch (err) {
         console.error("Search error:", err);
       } finally {
@@ -49,7 +27,7 @@ function SearchResults() {
       }
     };
 
-    fetchData();
+    fetchSearchResults();
   }, [query]);
 
   if (loading) {
@@ -69,13 +47,12 @@ function SearchResults() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {results.map((item) => (
           <div
-            key={`${item.categoryRoute}-${item.id}`}
+            key={item.id}
             onClick={() =>
-              navigate(`/${item.categoryRoute}/${item.id}`)
+              navigate(`/product/${item.categoryName}/${item.id}`)
             }
             className="cursor-pointer group flex flex-col"
           >
-            {/* IMAGE */}
             <div className="w-full h-65 md:h-80 overflow-hidden bg-gray-100">
               <img
                 src={item.image}
@@ -84,7 +61,6 @@ function SearchResults() {
               />
             </div>
 
-            {/* TEXT */}
             <div className="flex flex-col grow mt-2">
               <p className="text-sm font-medium leading-tight line-clamp-2">
                 {item.name}

@@ -593,3 +593,66 @@
 .order-card:nth-child(3) {
   animation-delay: 0.2s;
 }
+
+.order-product {
+  display: grid !important;
+  grid-template-columns: 90px 1fr auto !important;
+  gap: 18px !important;
+  align-items: center !important;
+}
+
+.order-product-img {
+  width: 90px;
+  height: 120px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
+.order-product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.order-product-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  gap: 8px;
+}
+
+.order-product-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: left;
+}
+
+.order-product-details {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: #777;
+}
+
+.order-product-amount {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.refund-status {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: #fff3cd;
+  color: #856404;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}

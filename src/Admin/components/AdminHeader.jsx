@@ -1,25 +1,26 @@
+import { useAdminAuth } from "../../Context/AdminAuthContext";
+
 function AdminHeader() {
+  const { admin } = useAdminAuth();
+
   return (
     <div style={header}>
-      {/* LEFT */}
       <div>
-        <h2 style={{ margin: 0 }}>Hello, Admin 👋</h2>
-        
+        <h2 style={{ margin: 0 }}>
+          Hello, {admin?.username || "Admin"} 👋
+        </h2>
       </div>
 
-     
-
-      {/* RIGHT */}
       <div style={rightSection}>
-       
-
         <div style={profile}>
           <img
             src="https://cdn-icons-png.flaticon.com/512/4159/4159471.png"
             alt="admin"
             style={avatar}
           />
-          <span style={{ fontSize: 14 }}>Admin</span>
+          <span style={{ fontSize: 14 }}>
+            {admin?.username || "Admin"}
+          </span>
         </div>
       </div>
     </div>
@@ -27,8 +28,6 @@ function AdminHeader() {
 }
 
 export default AdminHeader;
-
-/* ---------------- STYLES ---------------- */
 
 const header = {
   display: "flex",
@@ -42,34 +41,10 @@ const header = {
   flexWrap: "wrap",
 };
 
-const searchWrap = {
-  flex: 1,
-  display: "flex",
-  justifyContent: "center",
-};
-
-const searchInput = {
-  width: "100%",
-  maxWidth: "320px",
-  padding: "10px 14px",
-  borderRadius: "999px",
-  border: "1px solid #e5e7eb",
-  outline: "none",
-};
-
 const rightSection = {
   display: "flex",
   alignItems: "center",
   gap: "16px",
-};
-
-const iconBtn = {
-  background: "#f3f4f6",
-  border: "none",
-  borderRadius: "10px",
-  padding: "10px",
-  cursor: "pointer",
-  fontSize: "18px",
 };
 
 const profile = {

@@ -1,15 +1,16 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "../styles/DressDetails.css";
 import { useWishlist } from "../Context/WishlistContext";
-import Navbar from "./Navbar"
+import Navbar from "./Navbar";
 import { useCart } from "../Context/CartContext";
 import { toast } from "react-toastify";
+import { getFinalPrice } from "../utils/price";
+import API from "../api/axios";
 
 function ProductDetails() {
-  const { category, id } = useParams(); 
+  const { category, id } = useParams();
   const navigate = useNavigate();
 
   const { addToCart, isInCart } = useCart();
@@ -20,34 +21,62 @@ function ProductDetails() {
   const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
-    // SINGLE PRODUCT
-    axios
-      .get(`http://localhost:5000/${category}/${id}`)
-      .then(res => setProduct(res.data));
+    API.get(`/products/${id}/`)
+      .then((res) => {
+        setProduct(res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+        navigate("/");
+      });
 
-    // ALL PRODUCTS FROM SAME CATEGORY
-    axios
-      .get(`http://localhost:5000/${category}`)
-      .then(res => setAllProducts(res.data));
+    API.get(`/products/?category=${category}`)
+      .then((res) => setAllProducts(res.data))
+      .catch((err) => console.error(err));
 
     setSelectedSize("");
-  }, [category, id]);
+  }, [category, id, navigate]);
 
   if (!product) return <p>Loading...</p>;
 
   const related = allProducts
-    .filter(item => item.id !== product.id)
+    .filter(
+      (item) =>
+        item.subcategoryName === product.subcategoryName &&
+        item.id !== product.id
+    )
     .slice(0, 6);
 
   const isWishlisted = wishlist.some(
-  (item) => item.productId === product.id
-);
+    (item) => Number(item.productId) === Number(product.id)
+  );
+
+  const hasDiscount = Number(product.discount) > 0;
+  const finalPrice = getFinalPrice(product.price, product.discount);
+
+  const totalStock =
+    product.sizes?.reduce((sum, s) => sum + Number(s.stock), 0) || 0;
+
+  const selectedSizeObj = product.sizes?.find(
+    (s) => s.size === selectedSize
+  );
 
   const handleAddToCart = () => {
+    if (totalStock === 0) {
+      toast.error("Product is out of stock");
+      return;
+    }
+
     if (!selectedSize) {
       toast.error("Please select a size");
       return;
     }
+
+    if (!selectedSizeObj || Number(selectedSizeObj.stock) === 0) {
+      toast.error("Selected size is out of stock");
+      return;
+    }
+
     addToCart(product, selectedSize);
   };
 
@@ -55,28 +84,54 @@ function ProductDetails() {
     <div className="dress-details pt-24">
       <Navbar textColor="black" />
 
-      {/* IMAGE */}
-      <img src={product.image} alt={product.name} className="mt-19"/>
+      <img src={product.image} alt={product.name} className="mt-19" />
 
       <h2>{product.name}</h2>
-      <h3>₹{product.price}</h3>
-      <p><b>COLOR:</b> {product.color || "Green"}</p>
 
-      {/* SIZE */}
+      <p className="price-row">
+        {hasDiscount && (
+          <span className="original-price">₹{product.price}</span>
+        )}
+
+        <span className={hasDiscount ? "current-price" : "normal-price"}>
+          ₹{finalPrice}
+        </span>
+      </p>
+
+      <p>
+        <b>COLOR:</b> {product.color}
+      </p>
+
       <div className="sizes">
-        <p><b>SIZE</b></p>
-        {(product.size || ["S", "M", "L", "XL"]).map(s => (
-          <button
-            key={s}
-            className={selectedSize === s ? "active" : ""}
-            onClick={() => setSelectedSize(s)}
-          >
-            {s}
-          </button>
+        <p>
+          <b>SIZE</b>
+        </p>
+
+        {product.sizes?.map((s) => (
+          <div key={s.id} className="size-box">
+            <button
+              className={`${selectedSize === s.size ? "active" : ""} ${
+                Number(s.stock) === 0 ? "out-size" : ""
+              }`}
+              onClick={() => {
+                if (Number(s.stock) > 0) {
+                  setSelectedSize(s.size);
+                }
+              }}
+              disabled={Number(s.stock) === 0}
+            >
+              {s.size}
+            </button>
+
+            {Number(s.stock) > 0 && Number(s.stock) < 5 && (
+              <small className="low-stock">
+                Only {s.stock} left
+              </small>
+            )}
+          </div>
         ))}
       </div>
 
-      {/* ACTIONS */}
       <div className="action-bar">
         <button
           onClick={() => toggleWishlist(product)}
@@ -89,7 +144,11 @@ function ProductDetails() {
           )}
         </button>
 
-        {isInCart(product.id, selectedSize) ? (
+        {totalStock === 0 ? (
+          <button className="add-cart-btn" disabled>
+            Out of Stock
+          </button>
+        ) : isInCart(product.id, selectedSize) ? (
           <button
             className="go-cart-btn"
             onClick={() => navigate("/cart")}
@@ -107,21 +166,38 @@ function ProductDetails() {
         )}
       </div>
 
-      {/* RELATED */}
       <h3 className="related-title">Products that you might like</h3>
 
       <div className="related-products">
-        {related.map(item => (
-          <div
-            key={item.id}
-            className="related-card"
-            onClick={() => navigate(`/${category}/${item.id}`)}
-          >
-            <img src={item.image} alt={item.name} />
-            <p className="name">{item.name}</p>
-            <p className="price">₹{item.price}</p>
-          </div>
-        ))}
+        {related.map((item) => {
+          const hasDiscount = Number(item.discount) > 0;
+          const finalPrice = getFinalPrice(item.price, item.discount);
+
+          return (
+            <div
+              key={item.id}
+              className="related-card"
+              onClick={() =>
+                navigate(`/product/${item.categoryName}/${item.id}`)
+              }
+            >
+              <img src={item.image} alt={item.name} />
+              <p className="name">{item.name}</p>
+
+              <p className="price-row">
+                {hasDiscount && (
+                  <span className="original-price">₹{item.price}</span>
+                )}
+
+                <span
+                  className={hasDiscount ? "current-price" : "normal-price"}
+                >
+                  ₹{finalPrice}
+                </span>
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -164,3 +164,23 @@
 }
 
 
+.size-box {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 10px;
+  margin-bottom: 8px;
+}
+
+.size-box button.out-size {
+  text-decoration: line-through;
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.low-stock {
+  color: #c41e3a;
+  font-size: 11px;
+  margin-top: 4px;
+  font-weight: 600;
+}

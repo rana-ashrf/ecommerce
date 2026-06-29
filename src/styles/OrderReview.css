@@ -589,23 +589,28 @@
     padding: 24px 20px;
   }
 
-  /* Hide desktop right column */
   .checkout-right {
-    display: none;
+    display: block;
+    position: static;
   }
 
-  /* Show mobile summary inside left column (AFTER items) */
   .mobile-summary {
+    display: none !important;
+  }
+
+
+  /* Show mobile summary inside left column (AFTER items) */
+  /* .mobile-summary {
     display: block;
     margin-top: 0;
-  }
+  } */
 
   .mobile-summary .summary-card {
     box-shadow: var(--shadow-sm);
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 5w76px) {
   .checkout-page {
     padding-top: 60px;
   }
@@ -693,3 +698,5 @@
   background: var(--color-border);
   border-radius: 3px;
 }
+
+

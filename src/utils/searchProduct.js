@@ -1,36 +1,18 @@
-import axios from "axios";
+import API from "../api/axios";
 
 export const searchProducts = async (query) => {
-  if (!query) return [];
+  if (!query.trim()) return [];
 
-  const q = query.toLowerCase();
- 
-  const [
-    dressesRes,
-    topsRes,
-    bottomsRes,
-    knitwearRes,
-    outerwearRes
-  ] = await Promise.all([
-    axios.get("http://localhost:3000/dresses"),
-    axios.get("http://localhost:3000/Tops"),
-    axios.get("http://localhost:3000/bottoms"),
-    axios.get("http://localhost:3000/knitwear"),
-    axios.get("http://localhost:3000/outerwear"),
-  ]);
+  try {
+    const res = await API.get("/products/", {
+      params: {
+        search: query,
+      },
+    });
 
-
-  const allProducts = [
-    ...dressesRes.data,
-    ...topsRes.data,
-    ...bottomsRes.data,
-    ...knitwearRes.data,
-    ...outerwearRes.data,
-  ];
-
-  // filter 
-  return allProducts.filter((item) =>
-    item.name.toLowerCase().includes(q) ||
-    item.category.toLowerCase().includes(q)
-  );
+    return res.data;
+  } catch (err) {
+    console.error("Search error:", err.response?.data || err);
+    return [];
+  }
 };

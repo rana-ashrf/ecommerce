@@ -4,10 +4,11 @@ import { useAdminAuth } from "../../Context/AdminAuthContext";
 function AdminProtectedRoute({ children }) {
   const { admin } = useAdminAuth();
 
-  return admin && admin.role === "admin"
-  ? children
-  : <Navigate to="/admin/login" replace />;
-
+  return admin && admin.is_staff === true ? (
+    children
+  ) : (
+    <Navigate to="/admin/login" replace />
+  );
 }
 
 export default AdminProtectedRoute;
